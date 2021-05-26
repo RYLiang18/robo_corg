@@ -1,29 +1,65 @@
-# shoutout to https://www.youtube.com/watch?v=gb6BWQobeWI for da code
+# kudos to: 
+# https://www.youtube.com/watch?v=AHdb8K6BHLY
+# https://mystb.in/CompeteRejectedAshley.python
+# 
 
-# >>> imports >>>
+import os
+import json
 import discord
-from discord import Intents
-from discord import Streaming
+import requests
+from discord.ext import tasks, commands
+from twitchAPI.twitch import Twitch
 from discord.utils import get
-from discord.ext import commands
-# <<<<<<<<<<<<<<<
 
-# intents allow giich_bot to subscribe to specific buckets of events
-# https://discordpy.readthedocs.io/en/stable/intents.html#:~:text=In%20version%201.5%20comes%20the,attribute%20of%20the%20Intents%20documentation.
-intents = Intents.all()
+import pprint
 
-bot = commands.Bot(
-    command_prefix='!',
-    intent = intents
-)
+pp = pprint.PrettyPrinter(indent=2)
 
-# https://discordpy.readthedocs.io/en/stable/api.html#discord.on_member_update
-@bot.event
-async def on_member_update(self, before, after):
-    # note: `guild` means `server`
-    
-    # if user is still in same server after update and activity is still the same, do nothing
-    if after.guild.id == 844362684307734548 and before.activity == after.activity:
-        return
+intents = discord.Intents.all()
+bot = commands.Bot(command_prefix='!', intents=intents)
 
-    
+# robo-corg bot api key
+TOKEN = os.environ.get("discord_key_2")
+
+# >>> Authentication with Twitch API >>>
+client_id = os.environ.get("twitch_id_1")
+client_secret = os.environ.get("twitch_secret_1")
+
+twitch = Twitch(client_id, client_secret)
+twitch.authenticate_app([])
+
+# https://dev.twitch.tv/docs/api/reference#get-streams
+TWITCH_STREAM_API_ENDPOINT = "https://api.twitch.tv/helix/streams?user_id={0}"
+API_HEADERS = {
+    'Client-Id': client_id,
+    'Accept': 'application/vnd.twitchtv.v5+json',
+    'Authorization': f"Bearer {twitch.get_app_token()}"
+}
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+def check_user(user):
+    try:
+        user_id = twitch.get_users(
+            logins=[user]
+        )['data'][0]['id']
+
+        print(user_id)
+
+        url = TWITCH_STREAM_API_ENDPOINT.format(user_id)
+        # data = {"user_id" : user_id}
+
+        # try to get active status
+        try:
+            req = requests.Session().get(url, headers=API_HEADERS)
+            json_data = req.json()
+
+            pp.pprint(json_data)
+
+        except Exception as e:
+            pp.pprint(f"Error checking user: {e}")
+            return False
+
+    except IndexError:
+        return False
+
+check_user("thegiich")
