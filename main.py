@@ -27,39 +27,16 @@ client_secret = os.environ.get("twitch_secret_1")
 
 twitch = Twitch(client_id, client_secret)
 twitch.authenticate_app([])
-
-# https://dev.twitch.tv/docs/api/reference#get-streams
-TWITCH_STREAM_API_ENDPOINT = "https://api.twitch.tv/helix/streams?user_id={0}"
-API_HEADERS = {
-    'Client-Id': client_id,
-    'Accept': 'application/vnd.twitchtv.v5+json',
-    'Authorization': f"Bearer {twitch.get_app_token()}"
-}
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+# check to see if user is online
 def check_user(user):
     try:
-        user_id = twitch.get_users(
-            logins=[user]
-        )['data'][0]['id']
-
-        print(user_id)
-
-        url = TWITCH_STREAM_API_ENDPOINT.format(user_id)
-        # data = {"user_id" : user_id}
-
-        # try to get active status
-        try:
-            req = requests.Session().get(url, headers=API_HEADERS)
-            json_data = req.json()
-
-            pp.pprint(json_data)
-
-        except Exception as e:
-            pp.pprint(f"Error checking user: {e}")
-            return False
-
+        user_id = twitch.get_users(logins=[user])['data'][0]['id']
+        streams = twitch.get_streams(user_id=user_id)['data']
+        return len(streams) >= 1
     except IndexError:
         return False
 
-check_user("thegiich")
+
+
