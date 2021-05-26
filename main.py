@@ -10,7 +10,6 @@ import requests
 from discord.ext import tasks, commands
 from twitchAPI.twitch import Twitch
 from discord.utils import get
-
 import pprint
 
 pp = pprint.PrettyPrinter(indent=2)
@@ -39,4 +38,28 @@ def check_user(user):
         return False
 
 
+@tasks.loop(seconds=10)
+async def live_notifs_loop():
+    server = bot.get_guild(844362684307734548)
+    channel = bot.get_channel(844388150447964160)
 
+
+    stream_status = check_user("thegiich")
+
+    # get my discord user
+    giich = bot.get_user(
+        int(os.environ.get("my_discord_id"))
+    )
+
+    if stream_status:
+        # check if stream message has been sent
+        async for message in channel.history(limit=200):
+            # if stream message has been sent, do nothing
+            if str(giich.mention) in message.content and "is now streaming" in message.content:
+                break
+            # If it hasn't, send the mssage
+            # TODO
+
+@bot.event
+async def on_ready():
+    pass
