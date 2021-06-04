@@ -55,31 +55,45 @@ async def on_ready():
             int(os.environ.get("my_discord_id"))
         )
 
-        if stream_status is True:
-            notif_sent = False
-            # check if stream message has been sent
-            async for message in channel.history(limit=10):
-                # if stream message has been sent, break out of the loop
-                if str(giich.mention) in message.content and "is now streaming" in message.content:
-                    notif_sent = True
-                    break
+        # read from `whos_live.json` to see my most recent status
+        f = open('most_recent_status.json')
+        most_recent_status_data = json.load(f)
+        giich_status = most_recent_status_data["thegiich"]
+
+        if stream_status is True and not giich_status:
                
-            if not notif_sent:
-                await channel.send(
-                    f":red_circle: **LIVE**\n {giich.mention} is now streaming on Twitch!"
-                    f"\nhttps://www.twitch.tv/{twitch_username}"
-                )
+            await channel.send(
+                f":red_circle: **LIVE**\n {giich.mention} is now streaming on Twitch!"
+                f"\nhttps://www.twitch.tv/{twitch_username}"
+            )
+            print(f"{giich} started streaming. Sending a notification")
 
-                # >>>>>> CONTACT FACEBOOK MESSENGER BOT >>>>>>
-                # TODO
-                # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            # updating `most_recent_status.json` to true!
+            most_recent_status_data["thegiich"] = True
+            new_most_recent_status_data = json.dumps(
+                most_recent_status_data, indent=4
+            )
+            with open("most_recent_status.json", "w") as outfile:
+                outfile.write(new_most_recent_status_data)
+            
 
-                print(f"{giich} started streaming. Sending a notification")
-        else:
-            # check to see if a live notification was sent
+            # >>>>>> CONTACT FACEBOOK MESSENGER BOT >>>>>>
+            #  TODO
+            #  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+        elif stream_status is False and giich_status:
+            # delete the is streaming message.
             async for message in channel.history(limit=10):
                 if str(giich.mention) in message.content and "is now streaming" in message.content:
                     await message.delete() 
+
+            # revert `most_recent_status.json` to false
+            most_recent_status_data["thegiich"] = False
+            new_most_recent_status_data = json.dumps(
+                most_recent_status_data, indent=4
+            )
+            with open("most_recent_status.json", "w") as outfile:
+                outfile.write(new_most_recent_status_data)
     
     live_notifs_loop.start()
 
