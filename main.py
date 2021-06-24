@@ -7,15 +7,15 @@ import os
 import json
 import discord
 from discord.ext import tasks, commands
-from twitchAPI.twitch import Twitch
+# from twitchAPI.twitch import Twitch
 from discord.utils import get
+# from discord import message
 import pprint
 
-from twilio.rest import Client
-from twilio_aux import send_message
+from twitch_aux import Twitch_Aux
+from twilio_aux import Twilio_Aux
 
-from twitch_aux import check_user
-
+# from twilio.rest import Client
 pp = pprint.PrettyPrinter(indent=2)
 
 # intents allow giich_bot to subscribe to specific buckets of events
@@ -23,35 +23,26 @@ pp = pprint.PrettyPrinter(indent=2)
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-twitch_username = "thegiich"
+twitch_username = "Enviosity"
 
-# >>> Authentication with Twitch API >>>
-client_id = os.environ.get("twitch_id_1")
-client_secret = os.environ.get("twitch_secret_1")
+# # >>> Authentication with Twitch API >>>
+# client_id = os.environ.get("twitch_id_1")
+# client_secret = os.environ.get("twitch_secret_1")
 
-twitch = Twitch(client_id, client_secret)
-twitch.authenticate_app([])
-# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+# twitch = Twitch(client_id, client_secret)
+# twitch.authenticate_app([])
+# # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-
-# >>> Authentication with Twilio API >>>
-account_sid = os.environ['twilio_account_sid']
-auth_token = os.environ['twilio_auth_token']
-client = Client(account_sid, auth_token)
-# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
-# check to see if user is online
-
-
+twilio_client = Twilio_Aux(['+1***REMOVED***'])
 
 @bot.event
 async def on_ready():
-    server = bot.get_guild(844362684307734548)
+    # server = bot.get_guild(844362684307734548)
     channel = bot.get_channel(844388150447964160)
 
     @tasks.loop(seconds=10)
     async def live_notifs_loop():
-        stream_status = check_user(twitch_username)
+        streamer = Twitch_Aux(twitch_username)
 
         # get my discord user
         giich = bot.get_user(
@@ -63,11 +54,17 @@ async def on_ready():
         most_recent_status_data = json.load(f)
         giich_status = most_recent_status_data["thegiich"]
 
-        if stream_status is True and not giich_status:
-               
+        print("reached here")
+        print(streamer.is_live)
+        if streamer.is_live and giich_status is False:
+            print("reeeeeeeeeeee")
+            # await channel.send(
+            #     f":red_circle: **LIVE**\n {giich.mention} is now streaming on Twitch!"
+            #     f"\nhttps://www.twitch.tv/{twitch_username}"
+            # )
             await channel.send(
-                f":red_circle: **LIVE**\n {giich.mention} is now streaming on Twitch!"
-                f"\nhttps://www.twitch.tv/{twitch_username}"
+                f":red_circle: **LIVE**\n {twitch_username} is now streaming \"{streamer.title}\" on Twitch!"
+                f":\nPlaying {streamer.game}"
             )
             print(f"{giich} started streaming. Sending a notification")
 
@@ -80,10 +77,10 @@ async def on_ready():
                 outfile.write(new_most_recent_status_data)
             
             # >>>>>> TWILIO THINGY >>>>>>
-            send_message()
+            twilio_client.send_message()
             #  <<<<<<<<<<<<<<<<<<<<<<<<<<
 
-        elif stream_status is False and giich_status:
+        elif streamer.is_live is False and giich_status is True:
             # delete the is streaming message.
             async for message in channel.history(limit=10):
                 if str(giich.mention) in message.content and "is now streaming" in message.content:
