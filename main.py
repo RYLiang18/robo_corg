@@ -6,12 +6,15 @@
 import os
 import json
 import discord
-import requests
 from discord.ext import tasks, commands
 from twitchAPI.twitch import Twitch
 from discord.utils import get
 import pprint
 
+from twilio.rest import Client
+from twilio_aux import send_message
+
+from twitch_aux import check_user
 
 pp = pprint.PrettyPrinter(indent=2)
 
@@ -30,14 +33,14 @@ twitch = Twitch(client_id, client_secret)
 twitch.authenticate_app([])
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
+
+# >>> Authentication with Twilio API >>>
+account_sid = os.environ['twilio_account_sid']
+auth_token = os.environ['twilio_auth_token']
+client = Client(account_sid, auth_token)
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
 # check to see if user is online
-def check_user(user):
-    try:
-        user_id = twitch.get_users(logins=[user])['data'][0]['id']
-        streams = twitch.get_streams(user_id=user_id)['data']
-        return len(streams) >= 1
-    except IndexError:
-        return False
 
 
 
@@ -76,10 +79,9 @@ async def on_ready():
             with open("most_recent_status.json", "w") as outfile:
                 outfile.write(new_most_recent_status_data)
             
-
-            # >>>>>> CONTACT FACEBOOK MESSENGER BOT >>>>>>
-            #  TODO
-            #  <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+            # >>>>>> TWILIO THINGY >>>>>>
+            send_message()
+            #  <<<<<<<<<<<<<<<<<<<<<<<<<<
 
         elif stream_status is False and giich_status:
             # delete the is streaming message.
