@@ -24,15 +24,6 @@ intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 twitch_username = "Enviosity"
-
-# # >>> Authentication with Twitch API >>>
-# client_id = os.environ.get("twitch_id_1")
-# client_secret = os.environ.get("twitch_secret_1")
-
-# twitch = Twitch(client_id, client_secret)
-# twitch.authenticate_app([])
-# # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
 twilio_client = Twilio_Aux(['+1***REMOVED***'])
 
 @bot.event
@@ -78,7 +69,7 @@ async def on_ready():
             
             # >>>>>> TWILIO THINGY >>>>>>
             twilio_client.send_message()
-            #  <<<<<<<<<<<<<<<<<<<<<<<<<<
+            # <<<<<<<<<<<<<<<<<<<<<<<<<<
 
         elif streamer.is_live is False and giich_status is True:
             # delete the is streaming message.
