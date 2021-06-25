@@ -1,14 +1,6 @@
 from twitchAPI.twitch import Twitch
 import os
 
-# def check_user(user):
-#         try:
-#             user_id = twitch.get_users(logins=[user])['data'][0]['id']
-#             streams = twitch.get_streams(user_id=user_id)['data']
-#             return len(streams) >= 1
-#         except IndexError:
-#             return False
-
 class Twitch_Aux():
     def __init__(self, twitch_name_in) -> None:
         # >>> Authentication with Twitch API >>>
@@ -42,16 +34,3 @@ class Twitch_Aux():
         except IndexError:
             self.is_live = False
             self.stream_info = None
-    
-
-
-
-# def check_user(user):
-#     try:
-#         user_id = twitch.get_users(logins=[user])['data'][0]['id']
-#         streams = twitch.get_streams(user_id=user_id)['data']
-#         return len(streams) >= 1
-#     except IndexError:
-#         return False
-
-# def stream_info(user):
