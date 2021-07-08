@@ -24,7 +24,7 @@ intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 twitch_username = "Enviosity"
-twilio_client = Twilio_Aux(['+1***REMOVED***'])
+twilio_client = Twilio_Aux([os.environ.get("phone_num_1")])
 
 @bot.event
 async def on_ready():
