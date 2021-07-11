@@ -1,21 +1,16 @@
-# kudos to: 
-# https://www.youtube.com/watch?v=AHdb8K6BHLY
-# https://mystb.in/CompeteRejectedAshley.python
-# 
-
 import os
 import json
+import pprint
+
 import discord
 from discord.ext import tasks, commands
-# from twitchAPI.twitch import Twitch
 from discord.utils import get
-# from discord import message
-import pprint
 
 from twitch_aux import Twitch_Aux
 from twilio_aux import Twilio_Aux
 
-# from twilio.rest import Client
+from sqlalchemy.orm import sessionmaker
+
 pp = pprint.PrettyPrinter(indent=2)
 
 # intents allow giich_bot to subscribe to specific buckets of events
@@ -28,7 +23,6 @@ twilio_client = Twilio_Aux([os.environ.get("phone_num_1")])
 
 @bot.event
 async def on_ready():
-    # server = bot.get_guild(844362684307734548)
     channel = bot.get_channel(844388150447964160)
 
     @tasks.loop(seconds=10)
@@ -49,10 +43,7 @@ async def on_ready():
         print(streamer.is_live)
         if streamer.is_live and giich_status is False:
             print("reeeeeeeeeeee")
-            # await channel.send(
-            #     f":red_circle: **LIVE**\n {giich.mention} is now streaming on Twitch!"
-            #     f"\nhttps://www.twitch.tv/{twitch_username}"
-            # )
+            
             await channel.send(
                 f":red_circle: **LIVE**\n {twitch_username} is now streaming \"{streamer.title}\" on Twitch!"
                 f":\nPlaying {streamer.game}"
