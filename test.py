@@ -4,7 +4,7 @@ import pprint
 pp = pprint.PrettyPrinter(indent=2)
 
 
-twitch_username = "enviosity"
+twitch_username = "lilypichu"
 
 client_id = os.environ.get("twitch_id_1")
 client_secret = os.environ.get("twitch_secret_1")

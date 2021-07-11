@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Boolean
 from sqlalchemy.sql.schema import ForeignKey
 
 base = declarative_base()
@@ -11,6 +11,7 @@ class StreamerModel(base):
     )
     twitch_name = Column('twitch_name', String(100))
     discord_id = Column('discord_id', String(100))
+    is_live = Column('is_live', Boolean)
 
 class SubscriberModel(base):
     __tablename__ = "SUBSCRIBER_TBL"
