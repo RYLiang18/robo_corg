@@ -20,7 +20,7 @@ class SubscriberModel(base):
         Integer,
         primary_key=True
     )
-    phone_numbers = Column('phone_numbers', String(100))
+    phone_number = Column('phone_number', String(100))
     discord_id = Column('discord_id', String(100))
 
 class RelationshipModel(base):
