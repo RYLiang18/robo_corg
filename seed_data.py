@@ -38,15 +38,19 @@ streamers_seed = [
         'is_live':Twitch_Aux('enviosity').is_live
     },
     {
-        'twitch_name':'tenha', 
+        'twitch_name':'tenhatv', 
         'discord_id': '846904592372596736', 
-        'is_live':Twitch_Aux('tenha').is_live
+        'is_live':Twitch_Aux('tenhatv').is_live
     }
 ]
 
 subscribers_seed = [
     {
         'phone_number': '19498912046',
+        'discord_id': '844378570633379880'
+    },
+    {
+        'phone_number': '19492290909',
         'discord_id': '844378570633379880'
     },
 ]
@@ -59,5 +63,13 @@ relationship_seed = [
     {
         'phone_number':'19498912046',
         'twitch_name': 'lilypichu'
+    },
+    {
+        'phone_number':'19492290909',
+        'twitch_name': 'tenhatv'
+    },
+    {
+        'phone_number':'19492290909',
+        'twitch_name': 'enviosity'
     }
 ]
