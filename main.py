@@ -2,84 +2,65 @@ import os
 import json
 import pprint
 
+# discord.py imports
 import discord
 from discord.ext import tasks, commands
 from discord.utils import get
 
-from twitch_aux import Twitch_Aux
-from twilio_aux import Twilio_Aux
+# aux imports
+from aux.twitch_aux import Twitch_Aux
+from aux.twilio_aux import Twilio_Aux
 
+# sqlalchemy and database imports
+from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
+from database.models import (
+    StreamerModel, SubscriberModel
+)
 
+
+# ///////////////////// STARTING UP /////////////////////
 pp = pprint.PrettyPrinter(indent=2)
 
-# intents allow giich_bot to subscribe to specific buckets of events
-# https://discordpy.readthedocs.io/en/stable/intents.html#:~:text=In%20version%201.5%20comes%20the,attribute%20of%20the%20Intents%20documentation.
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-twitch_username = "Enviosity"
-twilio_client = Twilio_Aux([os.environ.get("phone_num_1")])
+# connecting the database
+db_pwd = os.environ.get("mysql_root_pwd")
+engine = create_engine(
+    f'mysql+mysqlconnector://root:{db_pwd}@localhost/robocorg'
+)
+# ////////////////////////////////////////////////////////
 
 @bot.event
 async def on_ready():
     channel = bot.get_channel(844388150447964160)
 
-    @tasks.loop(seconds=10)
+    @tasks.loop(seconds=30)
     async def live_notifs_loop():
-        streamer = Twitch_Aux(twitch_username)
+        Session = sessionmaker(bind=engine)
+        session = Session()
+        select_streamers = select(StreamerModel).order_by(StreamerModel.id)
+        for row in session.execute(select_streamers):
+            sm : StreamerModel = row.StreamerModel
+            streamer :Twitch_Aux = Twitch_Aux(sm.twitch_name)
 
-        # get my discord user
-        giich = bot.get_user(
-            int(os.environ.get("my_discord_id"))
-        )
+            # current streamer has just gone live or has just gone offline
+            if sm.is_live != streamer.is_live:
+                if streamer.is_live is True:
+                    streamer_mention = f"<@{sm.discord_id}"
+                    stream_link = f"https://www.twitch.tv/{streamer.twitch_name}"
+                    await channel.send(
+                        f":red_circle: **LIVE**\n"
+                        f"{streamer_mention} is now streaming \"{streamer.title}\n"
+                        f"Playing {streamer.game}\n"
+                        f"Go check it out on {stream_link}"
+                    )
 
-        # read from `whos_live.json` to see my most recent status
-        f = open('most_recent_status.json')
-        most_recent_status_data = json.load(f)
-        giich_status = most_recent_status_data["thegiich"]
+                    sm.is_live = not sm.is_live
+                    session.commit()
 
-        print("reached here")
-        print(streamer.is_live)
-        if streamer.is_live and giich_status is False:
-            print("reeeeeeeeeeee")
-            
-            await channel.send(
-                f":red_circle: **LIVE**\n {twitch_username} is now streaming \"{streamer.title}\" on Twitch!"
-                f":\nPlaying {streamer.game}"
-            )
-            print(f"{giich} started streaming. Sending a notification")
-
-            # updating `most_recent_status.json` to true!
-            most_recent_status_data["thegiich"] = True
-            new_most_recent_status_data = json.dumps(
-                most_recent_status_data, indent=4
-            )
-            with open("most_recent_status.json", "w") as outfile:
-                outfile.write(new_most_recent_status_data)
-            
-            # >>>>>> TWILIO THINGY >>>>>>
-            twilio_client.send_message()
-            # <<<<<<<<<<<<<<<<<<<<<<<<<<
-
-        elif streamer.is_live is False and giich_status is True:
-            # delete the is streaming message.
-            async for message in channel.history(limit=10):
-                if str(giich.mention) in message.content and "is now streaming" in message.content:
-                    await message.delete() 
-
-            # revert `most_recent_status.json` to false
-            most_recent_status_data["thegiich"] = False
-            new_most_recent_status_data = json.dumps(
-                most_recent_status_data, indent=4
-            )
-            with open("most_recent_status.json", "w") as outfile:
-                outfile.write(new_most_recent_status_data)
-    
-    live_notifs_loop.start()
+                else:
+                    pass
 
 
-print("server running")
-# robo-corg bot api key
-TOKEN = os.environ.get("discord_key_2")
-bot.run(TOKEN)

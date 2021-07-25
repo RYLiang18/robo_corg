@@ -23,3 +23,26 @@ def check_user(user):
         return False
 
 check_user(twitch_username)
+
+# ////////////////////////////////////////////////
+
+from sqlalchemy import create_engine, select
+from sqlalchemy.orm import sessionmaker
+from database.models import (
+    StreamerModel, SubscriberModel
+)
+
+db_pwd = os.environ.get("mysql_root_pwd")
+engine = create_engine(f'mysql+mysqlconnector://root:{db_pwd}@localhost/robocorg')
+
+Session = sessionmaker(bind=engine)
+session = Session()
+
+stmt = select(StreamerModel).order_by(StreamerModel.id)
+streamer = session.execute(stmt).first()
+streamer.is_live = not streamer.is_live
+session.commit()
+
+print(streamer.is_live)
+
+session.close()

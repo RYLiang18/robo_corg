@@ -2,7 +2,7 @@
 import os
 
 from sqlalchemy import create_engine, select
-from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy.orm import sessionmaker
 
 from database.models import (
     base, StreamerModel, SubscriberModel
