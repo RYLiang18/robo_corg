@@ -1,3 +1,7 @@
 https://stackoverflow.com/questions/51234778/what-are-the-differences-between-bot-and-client#:~:text=Bot%20is%20an%20extended%20version,Bot%20can%20do%20it%20too.
 
 https://stackoverflow.com/questions/43964328/how-do-i-mention-a-user-using-users-id-in-discord-py
+
+SQLAlchemy Many-to-many association
+https://docs.sqlalchemy.org/en/14/orm/basic_relationships.html
+https://stackoverflow.com/questions/25668092/flask-sqlalchemy-many-to-many-insert-data
