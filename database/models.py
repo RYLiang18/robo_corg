@@ -8,8 +8,12 @@ base = declarative_base()
 association_table = Table(
     'RELATIONSHIP_TBL',
     base.metadata,
-    Column('streamer_id', Integer, ForeignKey('STREAMER_TBL.id')),
-    Column('subscriber_id', Integer, ForeignKey('SUBSCRIBER_TBL.id'))
+    Column(
+        'streamer_id', Integer, ForeignKey('STREAMER_TBL.id'), primary_key=True
+    ),
+    Column(
+        'subscriber_id', Integer, ForeignKey('SUBSCRIBER_TBL.id'), primary_key=True
+    )
 )
 
 

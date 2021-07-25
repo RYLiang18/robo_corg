@@ -1,8 +1,10 @@
 from twilio.rest import Client
+from aux.twitch_aux import Twitch_Aux
+from typing import Dict
 import os
 
 class Twilio_Aux():
-    def __init__(self, phone_nos_in):
+    def __init__(self, phone_nos_in: Dict[str, str]):
         # >>> Authentication with Twilio API >>>
         account_sid = os.environ['twilio_account_sid']
         auth_token = os.environ['twilio_auth_token']
@@ -13,10 +15,23 @@ class Twilio_Aux():
         self.twilio_phone = '19549940698'
 
     
-    def send_message(self):
-        for phone_number in self.phone_nos:
+    def send_messages(self, streamer: Twitch_Aux):
+        for phone_number, receiver_name in self.phone_nos.items():
+            body = ""
+            if streamer.is_live:
+                body = (
+                    f"🤖beep boop greetings {receiver_name} robo-corg is here🤖;\n"
+                    f"{streamer.twitch_name} is now streaming \"{streamer.title}\"\n"
+                    f"Playing {streamer.game}\n"
+                    f"Go check it out on {streamer.get_stream_link()}\n"
+                )
+            else:
+                body = (
+                    f"beep boop {streamer.title} is now offline\n"
+                )
+            
             self.client.messages.create(
-                body = 'SOEMONE ON TWITCH is live wooooo',
+                body = body,
                 from_= self.twilio_phone,
                 to = phone_number
             )

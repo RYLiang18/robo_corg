@@ -1,5 +1,4 @@
 import os
-import json
 import pprint
 
 # discord.py imports
@@ -36,31 +35,50 @@ engine = create_engine(
 async def on_ready():
     channel = bot.get_channel(844388150447964160)
 
-    @tasks.loop(seconds=30)
+    @tasks.loop(seconds=60)
     async def live_notifs_loop():
         Session = sessionmaker(bind=engine)
         session = Session()
         select_streamers = select(StreamerModel).order_by(StreamerModel.id)
         for row in session.execute(select_streamers):
             sm : StreamerModel = row.StreamerModel
-            streamer :Twitch_Aux = Twitch_Aux(sm.twitch_name)
+            streamer : Twitch_Aux = Twitch_Aux(sm.twitch_name)
 
             # current streamer has just gone live or has just gone offline
             if sm.is_live != streamer.is_live:
-                if streamer.is_live is True:
-                    streamer_mention = f"<@{sm.discord_id}"
-                    stream_link = f"https://www.twitch.tv/{streamer.twitch_name}"
+                streamer_mention = f"<@{sm.discord_id}>"
+
+                subscriber_dict = dict()
+                for subscriber in sm.subscribers:
+                    sub_phone = subscriber.phone_number
+                    sub_name = bot.get_user(int(subscriber.discord_id)).name
+                    subscriber_dict[sub_phone] = sub_name
+
+                pp.pprint(subscriber_dict)
+                twilio_aux = Twilio_Aux(subscriber_dict)
+
+                if streamer.is_live is True:                 
                     await channel.send(
-                        f":red_circle: **LIVE**\n"
-                        f"{streamer_mention} is now streaming \"{streamer.title}\n"
+                        f":red_circle: **TWITCH LIVE**\n"
+                        f"{streamer_mention} is now streaming \"{streamer.title}!\"\n"
                         f"Playing {streamer.game}\n"
-                        f"Go check it out on {stream_link}"
+                        f"Go check it out on {streamer.get_stream_link()}\n"
                     )
-
-                    sm.is_live = not sm.is_live
-                    session.commit()
-
                 else:
-                    pass
+                    await channel.send(
+                        f":octagonal_sign: **STREAM OFFLINE**\n"
+                        f"{streamer_mention} is now offline"
+                    )
+                
+                twilio_aux.send_messages(streamer)
 
+                # update STREAMER_TBL
+                sm.is_live = not sm.is_live
+                session.commit()
+        session.close()
+    live_notifs_loop.start()
 
+print("server running")
+# robo-corg bot api key
+TOKEN = os.environ.get("discord_key_2")
+bot.run(TOKEN)

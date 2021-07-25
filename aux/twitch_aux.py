@@ -34,3 +34,6 @@ class Twitch_Aux():
         except IndexError:
             self.is_live = False
             self.stream_info = None
+    
+    def get_stream_link(self):
+        return f"https://www.twitch.tv/{self.twitch_name}"
