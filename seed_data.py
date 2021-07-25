@@ -5,42 +5,42 @@ streamers_seed = [
     {
         'twitch_name':'okcode', 
         'discord_id': '846904592372596736', 
-        'is_live':Twitch_Aux('okcode').is_live
+        'is_live':False
     },
     {
         'twitch_name':'tuonto', 
         'discord_id': '846904592372596736', 
-        'is_live':Twitch_Aux('tuonto').is_live
+        'is_live':False
     },
     {
         'twitch_name':'ludwig', 
         'discord_id': '846904592372596736', 
-        'is_live':Twitch_Aux('ludwig').is_live
+        'is_live':False
     },
     {
         'twitch_name':'39daph', 
         'discord_id': '846904592372596736', 
-        'is_live':Twitch_Aux('39daph').is_live
+        'is_live':False
     },
     {
         'twitch_name':'fuslie', 
         'discord_id': '846904592372596736', 
-        'is_live':Twitch_Aux('fuslie').is_live
+        'is_live':False
     },
     {
         'twitch_name':'lilypichu', 
         'discord_id': '846904592372596736', 
-        'is_live':Twitch_Aux('lilypichu').is_live
+        'is_live':False
     },
     {
         'twitch_name':'enviosity', 
         'discord_id': '846904592372596736', 
-        'is_live':Twitch_Aux('enviosity').is_live
+        'is_live':False
     },
     {
         'twitch_name':'tenhatv', 
         'discord_id': '846904592372596736', 
-        'is_live':Twitch_Aux('tenhatv').is_live
+        'is_live':False
     }
 ]
 
