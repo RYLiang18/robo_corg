@@ -9,7 +9,10 @@ from discord.utils import get
 # aux imports
 from aux.twitch_aux import Twitch_Aux
 from aux.twilio_aux import Twilio_Aux
-from aux.other import checkPhoneNumber
+from aux.other import (
+    check_phone_number_in_dms,
+    extract_phone_number
+)
 
 # sqlalchemy and database imports
 from sqlalchemy import create_engine, select, func
@@ -84,8 +87,9 @@ async def on_ready():
     name='subscribeTo', 
     help="Receive text notifications when a specified streamer goes live",
 )
-async def subscribeTo(ctx, twitch_name):
+async def subscribe_to(ctx, twitch_name):
     session = Session()
+    twilio_aux = Twilio_Aux()
     sender_id = str(ctx.author.id)
 
     # query Streamer with 'twitch_name' from STREAMER_TBL
@@ -111,11 +115,23 @@ async def subscribeTo(ctx, twitch_name):
                 f"robo-corg promises to keep this information confidential!"
             )
 
-            resp = await bot.wait_for('message', check=checkPhoneNumber)
-
-            await ctx.author.send(f"you said: {resp}")
+            resp = (
+                await bot.wait_for('message', check=check_phone_number_in_dms)
+            ).content
+            phone_number = extract_phone_number(resp)
+            
+            # creating new subscriber based on schema and adding relationship
+            # to STREAMBER_TBL
+            new_sub = SubscriberModel(
+                phone_number = phone_number,
+                discord_id = str(ctx.author.id)
+            )
+            streamer.subscribers.append(new_sub)
     else:
         pass
+    session.commit()
+    session.close()
+
 print("server running")
 # robo-corg bot api key
 TOKEN = os.environ.get("discord_key_2")

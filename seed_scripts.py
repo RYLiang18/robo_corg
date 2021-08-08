@@ -27,19 +27,21 @@ session = Session()
 
 # populating STREAMER_TBL
 for streamer_info in streamers_seed:
-    streamer = StreamerModel()
-    streamer.twitch_name = streamer_info['twitch_name']
-    streamer.discord_id = streamer_info['discord_id']
-    streamer.is_live = streamer_info['is_live']
+    streamer = StreamerModel(
+        twitch_name = streamer_info['twitch_name'],
+        discord_id = streamer_info['discord_id'],
+        is_live = streamer_info['is_live']
+    )
     
     session.add(streamer)
 session.commit()
 
 # populating SUBSCRIBER_TBL
 for sub_info in subscribers_seed:
-    subscriber = SubscriberModel()
-    subscriber.phone_number = sub_info['phone_number']
-    subscriber.discord_id = sub_info['discord_id']
+    subscriber = SubscriberModel(
+        phone_number = sub_info['phone_number'],
+        discord_id = sub_info['discord_id']
+    )
 
     session.add(subscriber)
 session.commit()
