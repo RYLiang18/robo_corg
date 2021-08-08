@@ -9,9 +9,10 @@ from discord.utils import get
 # aux imports
 from aux.twitch_aux import Twitch_Aux
 from aux.twilio_aux import Twilio_Aux
+from aux.other import checkPhoneNumber
 
 # sqlalchemy and database imports
-from sqlalchemy import create_engine, select
+from sqlalchemy import create_engine, select, func
 from sqlalchemy.orm import sessionmaker
 from database.models import (
     StreamerModel, SubscriberModel
@@ -22,13 +23,15 @@ from database.models import (
 pp = pprint.PrettyPrinter(indent=2)
 
 intents = discord.Intents.all()
-bot = commands.Bot(command_prefix='!', intents=intents)
+bot = commands.Bot(command_prefix='!robocorg ', intents=intents)
 
 # connecting the database
 db_pwd = os.environ.get("mysql_root_pwd")
 engine = create_engine(
     f'mysql+mysqlconnector://root:{db_pwd}@localhost/robocorg'
 )
+
+Session = sessionmaker(bind=engine)
 # ////////////////////////////////////////////////////////
 
 @bot.event
@@ -37,7 +40,6 @@ async def on_ready():
 
     @tasks.loop(seconds=60)
     async def live_notifs_loop():
-        Session = sessionmaker(bind=engine)
         session = Session()
         select_streamers = select(StreamerModel).order_by(StreamerModel.id)
         for row in session.execute(select_streamers):
@@ -78,6 +80,43 @@ async def on_ready():
         session.close()
     live_notifs_loop.start()
 
+@bot.command(
+    name='subscribeTo', 
+    help="Receive text notifications when a specified streamer goes live",
+)
+async def subscribeTo(ctx, twitch_name):
+    print("ENTERED SUBSCRIBET0!!!")
+    session = Session()
+    sender_id = str(ctx.author.id)
+
+    # query Streamer with 'twitch_name' from STREAMER_TBL
+    streamer : StreamerModel = session.query(StreamerModel).filter(
+        StreamerModel.twitch_name.ilike(f"%{twitch_name}%")
+    ).first()
+
+    # query Subscriber with 'sender_id' from SUBSCRIBER_TBL
+    subscriber: SubscriberModel = session.query(SubscriberModel).filter(
+        SubscriberModel.discord_id.ilike(f"%{sender_id}%")
+    ).first()
+
+    if streamer is not None:
+        if subscriber is not None:
+            streamer.subscribers.append(subscriber)
+            ctx.send("done")
+        else:
+            # new subscriber,
+            # dm for phone number
+            await ctx.author.send(
+                f"beep boop, looks like you are a first-time subscriber!\n"
+                f"To receive text notifications for {streamer.twitch_name}, please enter your phone number\n"
+                f"robo-corg promises to keep this information confidential!"
+            )
+
+            resp = await bot.wait_for('message', check=checkPhoneNumber)
+
+            await ctx.author.send(f"you said: {resp}")
+    else:
+        pass
 print("server running")
 # robo-corg bot api key
 TOKEN = os.environ.get("discord_key_2")

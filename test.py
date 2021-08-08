@@ -38,11 +38,18 @@ engine = create_engine(f'mysql+mysqlconnector://root:{db_pwd}@localhost/robocorg
 Session = sessionmaker(bind=engine)
 session = Session()
 
-stmt = select(StreamerModel).order_by(StreamerModel.id)
-streamer = session.execute(stmt).first()
-streamer.is_live = not streamer.is_live
-session.commit()
+# stmt = select(StreamerModel).order_by(StreamerModel.id)
+# streamer = session.execute(stmt).first()
+# streamer.is_live = not streamer.is_live
+# session.commit()
 
-print(streamer.is_live)
+name = "bruh"
+
+streamer = session.query(StreamerModel).filter(
+    StreamerModel.twitch_name.ilike(f"%{name}%")
+).first()
+
+print(streamer)
+# print(streamer.is_live)
 
 session.close()
