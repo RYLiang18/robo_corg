@@ -85,7 +85,6 @@ async def on_ready():
     help="Receive text notifications when a specified streamer goes live",
 )
 async def subscribeTo(ctx, twitch_name):
-    print("ENTERED SUBSCRIBET0!!!")
     session = Session()
     sender_id = str(ctx.author.id)
 
