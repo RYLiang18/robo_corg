@@ -4,7 +4,7 @@ from typing import Dict
 import os
 
 class Twilio_Aux():
-    def __init__(self, phone_nos_in: Dict[str, str]):
+    def __init__(self, phone_nos_in: Dict[str, str] = None):
         # >>> Authentication with Twilio API >>>
         account_sid = os.environ['twilio_account_sid']
         auth_token = os.environ['twilio_auth_token']
@@ -35,4 +35,11 @@ class Twilio_Aux():
                 from_= self.twilio_phone,
                 to = phone_number
             )
+
+    def send_custom_message(self, phone_number: str, body: str):
+        self.client.messages.create(
+            body = body,
+            from_= phone_number,
+            to = phone_number
+        )
         
