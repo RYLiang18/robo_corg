@@ -127,8 +127,14 @@ async def subscribe_to(ctx, twitch_name):
                 discord_id = str(ctx.author.id)
             )
             streamer.subscribers.append(new_sub)
+            twilio_aux.send_custom_message(
+                phone_number, 
+                f"You are now subscribed to {streamer.twitch_name}!"
+            )
     else:
-        pass
+        ctx.send(
+            f"oops, looks like {streamer.twitch_name} is not yet registered with robo-corg!"
+        )
     session.commit()
     session.close()
 
