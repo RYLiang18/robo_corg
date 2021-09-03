@@ -1,6 +1,0 @@
-name: discord
-channels:
-  - defaults
-dependencies:
-  - python=3.9
-prefix: /home/tryndamere/anaconda3/envs/discord
