@@ -1,3 +1,5 @@
 # _pycache_ stuff
 __pycache__/
 *.pyc
+
+# venv stuff
