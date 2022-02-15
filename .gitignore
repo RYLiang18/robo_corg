@@ -3,8 +3,8 @@ __pycache__/
 *.pyc
 
 # docker stuff for now
-docker-compose.yml
-Dockerfile
+# docker-compose.yml
+# Dockerfile
 
 # env stuff
 .env
