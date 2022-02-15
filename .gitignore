@@ -2,5 +2,6 @@
 __pycache__/
 *.pyc
 
-# venv stuff
-/robocorg_env
+# docker stuff for now
+docker-compose.yml
+Dockerfile
