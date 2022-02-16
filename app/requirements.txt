@@ -1,3 +1,4 @@
 SQLAlchemy==1.4.31
 mysql-connector-python==8.0.28
 protobuf==3.19.4
+get-docker-secret==1.0.1

@@ -1,9 +1,10 @@
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
-import os
+from get_docker_secret import get_docker_secret
+# import os
 
-db_user = os.environ.get("DB_USER")
-db_pwd = os.environ.get("DB_PWD")
+db_user = get_docker_secret('db_user')
+db_pwd = get_docker_secret('db_pwd')
 
 print(db_user)
 print(db_pwd)
