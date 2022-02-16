@@ -1,10 +1,22 @@
 version: '3.9'
 
+secrets:
+  db_user:
+    file: ./secrets/db_user.txt
+  db_pwd:
+    file: ./secrets/db_pwd.txt
+  db_root_pwd:
+    file: ./secrets/db_root_pwd.txt
+
+
 services:
   bot:
     build: ./app
-    env_file:
-      - .env
+    
+    secrets:
+      - db_user
+      - db_pwd
+    
     depends_on:
       db:
         condition: service_healthy
@@ -13,11 +25,15 @@ services:
     image: mysql:8.0.28
     restart: always
 
+    secrets:
+      - db_user
+      - db_pwd
+      - db_root_pwd
     environment:
-      MYSQL_DATABASE: robocorg
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PWD}
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PWD}
+      - MYSQL_DATABASE=robocorg
+      - MYSQL_USER_FILE=/run/secrets/db_user
+      - MYSQL_PASSWORD_FILE=/run/secrets/db_pwd
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/db_root_pwd
     
     ports:
       - 3306:3306
@@ -25,11 +41,9 @@ services:
     volumes:
       - robocorg-db:/data/db
     
-    env_file:
-      - .env
-
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
 
 volumes:
   robocorg-db:
+
