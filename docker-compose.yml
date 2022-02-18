@@ -2,12 +2,24 @@ version: '3.9'
 
 secrets:
   db_user:
-    file: ./secrets/db_user.txt
+    file: ./secrets/db/db_user.txt
   db_pwd:
-    file: ./secrets/db_pwd.txt
+    file: ./secrets/db/db_pwd.txt
   db_root_pwd:
-    file: ./secrets/db_root_pwd.txt
-
+    file: ./secrets/db/db_root_pwd.txt
+  
+  twilio_auth_token:
+    file: ./secrets/twilio/twilio_auth_token.txt
+  twilio_sid:
+    file: ./secrets/twilio/twilio_sid.txt
+  
+  discord_token:
+    file: ./secrets/discord/discord_token.txt
+  
+  twitch_client_id:
+    file: ./secrets/twitch/twitch_client_id.txt
+  twitch_client_secret:
+    file: ./secrets/twitch/twitch_client_secret.txt
 
 services:
   bot:
@@ -16,6 +28,14 @@ services:
     secrets:
       - db_user
       - db_pwd
+      
+      - twilio_auth_token
+      - twilio_sid
+      
+      - discord_token
+      
+      - twitch_client_id
+      - twitch_client_secret
     
     depends_on:
       db:
@@ -29,6 +49,7 @@ services:
       - db_user
       - db_pwd
       - db_root_pwd
+      
     environment:
       - MYSQL_DATABASE=robocorg
       - MYSQL_USER_FILE=/run/secrets/db_user
@@ -39,11 +60,14 @@ services:
       - 3306:3306
     
     volumes:
-      - robocorg-db:/data/db
+      - ./db_init:/docker-entrypoint-initdb.d
     
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      # interval: 5s
+      # timeout: 30s
+      # retries: 10
+      # start_period: 30s
 
 volumes:
   robocorg-db:
-

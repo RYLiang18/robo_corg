@@ -1,5 +1,7 @@
 import os
 import pprint
+from get_docker_secret import get_docker_secret
+
 
 # discord.py imports
 import discord
@@ -29,9 +31,12 @@ intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='!robocorg ', intents=intents)
 
 # connecting the database
-db_pwd = os.environ.get("mysql_root_pwd")
+db_user = get_docker_secret('db_user')
+db_pwd = get_docker_secret('db_pwd')
+
+# db_pwd = os.environ.get("mysql_root_pwd")
 engine = create_engine(
-    f'mysql+mysqlconnector://root:{db_pwd}@localhost/robocorg'
+    f'mysql+mysqlconnector://{db_user}:{db_pwd}@db/robocorg',
 )
 
 Session = sessionmaker(bind=engine)
@@ -43,6 +48,8 @@ async def on_ready():
 
     @tasks.loop(seconds=60)
     async def live_notifs_loop():
+        print("initiating loop")
+
         session = Session()
         select_streamers = select(StreamerModel).order_by(StreamerModel.id)
         for row in session.execute(select_streamers):
@@ -88,6 +95,7 @@ async def on_ready():
     help="Receive text notifications when a specified streamer goes live",
 )
 async def subscribe_to(ctx, twitch_name):
+    print("trying to subscribe")
     session = Session()
     twilio_aux = Twilio_Aux()
     sender_id = str(ctx.author.id)
@@ -132,13 +140,13 @@ async def subscribe_to(ctx, twitch_name):
                 f"You are now subscribed to {streamer.twitch_name}!"
             )
     else:
-        ctx.send(
-            f"oops, looks like {streamer.twitch_name} is not yet registered with robo-corg!"
+        await ctx.send(
+            f"oops, looks like {twitch_name} is not yet registered with robo-corg!"
         )
     session.commit()
     session.close()
 
-print("server running")
-# robo-corg bot api key
-TOKEN = os.environ.get("discord_key_2")
+TOKEN = get_docker_secret('discord_token')
+
+print("SERVER IS RUNNING!")
 bot.run(TOKEN)
