@@ -5,5 +5,5 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY test2.py .
-ENTRYPOINT [ "python", "test2.py" ]
+COPY . .
+ENTRYPOINT ["python", "-u", "main.py"]

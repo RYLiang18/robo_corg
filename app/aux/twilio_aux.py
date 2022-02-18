@@ -2,12 +2,17 @@ from twilio.rest import Client
 from aux.twitch_aux import Twitch_Aux
 from typing import Dict
 import os
+from get_docker_secret import get_docker_secret
+
 
 class Twilio_Aux():
     def __init__(self, phone_nos_in: Dict[str, str] = None):
         # >>> Authentication with Twilio API >>>
-        account_sid = os.environ['twilio_account_sid']
-        auth_token = os.environ['twilio_auth_token']
+        # account_sid = os.environ['twilio_account_sid']
+        # auth_token = os.environ['twilio_auth_token']
+        account_sid = get_docker_secret('twilio_sid')
+        auth_token = get_docker_secret('twilio_auth_token')
+
         self.client = Client(account_sid, auth_token)
         # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
