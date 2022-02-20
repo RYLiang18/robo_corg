@@ -1,3 +1,4 @@
+from pip import main
 from twitchAPI.twitch import Twitch
 import os
 from get_docker_secret import get_docker_secret
@@ -30,7 +31,7 @@ class Twitch_Aux():
 
     def init_helper(self):
         try:
-            user_id = user_id = self.twitch.get_users(
+            user_id = self.twitch.get_users(
                 logins=[self.twitch_name]
             )['data'][0]['id']
             self.stream_info = self.twitch.get_streams(user_id=user_id)['data']
