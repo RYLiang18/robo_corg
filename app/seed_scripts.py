@@ -23,8 +23,8 @@ engine = create_engine(
 
 # wipe the database and create tables from scratch
 # have a feeling this is terrible practice
-base.metadata.drop_all(engine)
-base.metadata.create_all(bind=engine)
+# base.metadata.drop_all(engine)
+# base.metadata.create_all(bind=engine)
 
 # ///////////////////////////////////
 Session = sessionmaker(bind=engine)
@@ -34,7 +34,6 @@ session = Session()
 for streamer_info in streamers_seed:
     streamer = StreamerModel(
         twitch_name = streamer_info['twitch_name'],
-        discord_id = streamer_info['discord_id'],
         is_live = streamer_info['is_live']
     )
     

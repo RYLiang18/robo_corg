@@ -3,12 +3,12 @@ from aux.twitch_aux import Twitch_Aux
 streamers_seed = [
     # these discord ids are robocorg
     {
-        'twitch_name':'okcode', 
+        'twitch_name':'Asmongold', 
         'discord_id': '846904592372596736', 
         'is_live':False
     },
     {
-        'twitch_name':'tuonto', 
+        'twitch_name':'MTashed', 
         'discord_id': '846904592372596736', 
         'is_live':False
     },
@@ -38,7 +38,7 @@ streamers_seed = [
         'is_live':False
     },
     {
-        'twitch_name':'tenhatv', 
+        'twitch_name':'pokimane', 
         'discord_id': '846904592372596736', 
         'is_live':False
     }

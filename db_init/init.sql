@@ -1,7 +1,6 @@
 CREATE TABLE STREAMER_TBL (
     `id` int NOT NULL AUTO_INCREMENT,
     `twitch_name` varchar(100) DEFAULT NULL,
-    `discord_id` varchar(100) DEFAULT NULL,
     `is_live` tinyint(1) DEFAULT NULL,
     PRIMARY KEY (`id`)
 );

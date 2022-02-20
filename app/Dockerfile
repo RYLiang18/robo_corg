@@ -6,4 +6,4 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 COPY . .
-ENTRYPOINT ["python", "-u", "main.py"]
+ENTRYPOINT ["sh", "init.sh"]
