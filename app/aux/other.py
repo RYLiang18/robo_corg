@@ -8,7 +8,7 @@ r = re.compile(
 )
 
 def check_phone_number_in_dms(msg: Message):
-    if msg.channel == msg.author.dm_channel:
+    if not msg.author.bot and msg.channel == msg.author.dm_channel:
         print("msg in DM channel")
         match = r.search(msg.content)
         return bool(match)
@@ -21,4 +21,3 @@ def extract_phone_number(phone_number: str):
     numeric_filter = filter(str.isdigit, raw_str)
     return "".join(numeric_filter)
 
-extract_phone_number("my pn is (949)3946676")
