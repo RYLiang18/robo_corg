@@ -1,7 +1,21 @@
-https://stackoverflow.com/questions/51234778/what-are-the-differences-between-bot-and-client#:~:text=Bot%20is%20an%20extended%20version,Bot%20can%20do%20it%20too.
+- https://stackoverflow.com/questions/51234778/what-are-the-differences-between-bot-and-client#:~:text=Bot%20is%20an%20extended%20version,Bot%20can%20do%20it%20too.
 
-https://stackoverflow.com/questions/43964328/how-do-i-mention-a-user-using-users-id-in-discord-py
+- https://stackoverflow.com/questions/43964328/how-do-i-mention-a-user-using-users-id-in-discord-py
 
 SQLAlchemy Many-to-many association
-https://docs.sqlalchemy.org/en/14/orm/basic_relationships.html
+    - https://docs.sqlalchemy.org/en/14/orm/basic_relationships.html
 https://stackoverflow.com/questions/25668092/flask-sqlalchemy-many-to-many-insert-data
+
+
+To run a container interactively from docker-compose
+    - if it's still running:
+        - `docker-compose exec <service-name> bash`
+    - else:
+        - `docker-compose run --rm <service-name>`
+
+Q: why can't my python program connect to `db/3306` during `docker-compose up`
+    - In `docker-compose.yml`, to make sure that DB is initalized before any other service, use `healthcheck` and `depend-on`
+
+Storing Secrets like API keys in Docker-compose
+- I guess the only way to do it so far is using docker-compose, and not dockerfile
+https://www.rockyourcode.com/using-docker-secrets-with-docker-compose/#:~:text=You%20can%20access%20the%20secrets,secrets%20are%20stored%20as%20files.

@@ -1,5 +1,6 @@
 # import mysql.connector
 import os
+from get_docker_secret import get_docker_secret
 
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
@@ -13,13 +14,17 @@ from seed_data import (
 )
 
 # connecting the database
-db_pwd = os.environ.get("mysql_root_pwd")
-engine = create_engine(f'mysql+mysqlconnector://root:{db_pwd}@localhost/robocorg')
+db_user = get_docker_secret('db_user')
+db_pwd = get_docker_secret('db_pwd')
+
+engine = create_engine(
+    f'mysql+mysqlconnector://{db_user}:{db_pwd}@db/robocorg',
+)
 
 # wipe the database and create tables from scratch
 # have a feeling this is terrible practice
-base.metadata.drop_all(engine)
-base.metadata.create_all(bind=engine)
+# base.metadata.drop_all(engine)
+# base.metadata.create_all(bind=engine)
 
 # ///////////////////////////////////
 Session = sessionmaker(bind=engine)
@@ -29,7 +34,6 @@ session = Session()
 for streamer_info in streamers_seed:
     streamer = StreamerModel(
         twitch_name = streamer_info['twitch_name'],
-        discord_id = streamer_info['discord_id'],
         is_live = streamer_info['is_live']
     )
     

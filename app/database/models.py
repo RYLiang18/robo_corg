@@ -23,7 +23,6 @@ class StreamerModel(base):
         'id', Integer, primary_key=True
     )
     twitch_name = Column('twitch_name', String(100))
-    discord_id = Column('discord_id', String(100))
     is_live = Column('is_live', Boolean)
 
     subscribers = relationship(
