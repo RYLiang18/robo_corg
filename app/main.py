@@ -117,7 +117,6 @@ async def subscribe_to(ctx, twitch_name):
             # new subscriber,
             # dm for phone number
             await ctx.author.send(
-                f"beep boop, looks like you are a first-time subscriber!\n"
                 f"To receive text notifications for {streamer.twitch_name}, please enter your phone number\n"
                 f"robo-corg promises to keep this information confidential!"
             )
@@ -153,7 +152,7 @@ async def add_streamer(ctx, twitch_name):
     # checking that streamer exists
     streamer: Twitch_Aux = Twitch_Aux(twitch_name)
 
-    if not streamer.stream_info:
+    if streamer.stream_info is None:
         await ctx.send(
             f"shieee, there isn't a twitch streamer named {twitch_name}\n"
         )
