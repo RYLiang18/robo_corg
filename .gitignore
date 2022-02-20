@@ -2,5 +2,8 @@
 __pycache__/
 *.pyc
 
-# venv stuff
-/robocorg_env
+# vscode devcontainer extension stuff
+.devcontainer/
+
+# naughty naughty
+secrets/

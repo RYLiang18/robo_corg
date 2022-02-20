@@ -1,0 +1,66 @@
+version: '3.9'
+
+secrets:
+  db_user:
+    file: ./secrets/db/db_user.txt
+  db_pwd:
+    file: ./secrets/db/db_pwd.txt
+  db_root_pwd:
+    file: ./secrets/db/db_root_pwd.txt
+  
+  twilio_auth_token:
+    file: ./secrets/twilio/twilio_auth_token.txt
+  twilio_sid:
+    file: ./secrets/twilio/twilio_sid.txt
+  
+  discord_token:
+    file: ./secrets/discord/discord_token.txt
+  
+  twitch_client_id:
+    file: ./secrets/twitch/twitch_client_id.txt
+  twitch_client_secret:
+    file: ./secrets/twitch/twitch_client_secret.txt
+
+services:
+  bot:
+    build: ./app
+    
+    secrets:
+      - db_user
+      - db_pwd
+      
+      - twilio_auth_token
+      - twilio_sid
+      
+      - discord_token
+      
+      - twitch_client_id
+      - twitch_client_secret
+    
+    depends_on:
+      db:
+        condition: service_healthy
+        
+  db:
+    image: mysql:8.0.28
+    restart: always
+
+    secrets:
+      - db_user
+      - db_pwd
+      - db_root_pwd
+      
+    environment:
+      - MYSQL_DATABASE=robocorg
+      - MYSQL_USER_FILE=/run/secrets/db_user
+      - MYSQL_PASSWORD_FILE=/run/secrets/db_pwd
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/db_root_pwd
+    
+    ports:
+      - 3306:3306
+    
+    volumes:
+      - ./db_init:/docker-entrypoint-initdb.d
+    
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]

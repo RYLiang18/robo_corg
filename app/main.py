@@ -1,5 +1,8 @@
 import os
 import pprint
+from unicodedata import name
+from get_docker_secret import get_docker_secret
+
 
 # discord.py imports
 import discord
@@ -29,9 +32,12 @@ intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='!robocorg ', intents=intents)
 
 # connecting the database
-db_pwd = os.environ.get("mysql_root_pwd")
+db_user = get_docker_secret('db_user')
+db_pwd = get_docker_secret('db_pwd')
+
+# db_pwd = os.environ.get("mysql_root_pwd")
 engine = create_engine(
-    f'mysql+mysqlconnector://root:{db_pwd}@localhost/robocorg'
+    f'mysql+mysqlconnector://{db_user}:{db_pwd}@db/robocorg',
 )
 
 Session = sessionmaker(bind=engine)
@@ -43,6 +49,8 @@ async def on_ready():
 
     @tasks.loop(seconds=60)
     async def live_notifs_loop():
+        print("initiating loop")
+
         session = Session()
         select_streamers = select(StreamerModel).order_by(StreamerModel.id)
         for row in session.execute(select_streamers):
@@ -51,8 +59,6 @@ async def on_ready():
 
             # current streamer has just gone live or has just gone offline
             if sm.is_live != streamer.is_live:
-                streamer_mention = f"<@{sm.discord_id}>"
-
                 subscriber_dict = dict()
                 for subscriber in sm.subscribers:
                     sub_phone = subscriber.phone_number
@@ -65,14 +71,14 @@ async def on_ready():
                 if streamer.is_live is True:                 
                     await channel.send(
                         f":red_circle: **TWITCH LIVE**\n"
-                        f"{streamer_mention} is now streaming \"{streamer.title}!\"\n"
+                        f"{streamer.twitch_name} is now streaming \"{streamer.title}!\"\n"
                         f"Playing {streamer.game}\n"
                         f"Go check it out on {streamer.get_stream_link()}\n"
                     )
                 else:
                     await channel.send(
                         f":octagonal_sign: **STREAM OFFLINE**\n"
-                        f"{streamer_mention} is now offline"
+                        f"{streamer.twitch_name} is now offline"
                     )
                 
                 twilio_aux.send_messages(streamer)
@@ -88,6 +94,7 @@ async def on_ready():
     help="Receive text notifications when a specified streamer goes live",
 )
 async def subscribe_to(ctx, twitch_name):
+    print("trying to subscribe")
     session = Session()
     twilio_aux = Twilio_Aux()
     sender_id = str(ctx.author.id)
@@ -110,7 +117,6 @@ async def subscribe_to(ctx, twitch_name):
             # new subscriber,
             # dm for phone number
             await ctx.author.send(
-                f"beep boop, looks like you are a first-time subscriber!\n"
                 f"To receive text notifications for {streamer.twitch_name}, please enter your phone number\n"
                 f"robo-corg promises to keep this information confidential!"
             )
@@ -132,13 +138,42 @@ async def subscribe_to(ctx, twitch_name):
                 f"You are now subscribed to {streamer.twitch_name}!"
             )
     else:
-        ctx.send(
-            f"oops, looks like {streamer.twitch_name} is not yet registered with robo-corg!"
+        await ctx.send(
+            f"oops, looks like {twitch_name} is not yet registered with robo-corg!"
         )
     session.commit()
     session.close()
 
-print("server running")
-# robo-corg bot api key
-TOKEN = os.environ.get("discord_key_2")
+@bot.command(
+    name="addStreamer",
+    help="add a streamer to configure robo-corg to send a message whenever said streamer goes live on Twitch!"
+)
+async def add_streamer(ctx, twitch_name):
+    # checking that streamer exists
+    streamer: Twitch_Aux = Twitch_Aux(twitch_name)
+
+    if streamer.stream_info is None:
+        await ctx.send(
+            f"shieee, there isn't a twitch streamer named {twitch_name}\n"
+        )
+    else:
+        session = Session()
+        sm = StreamerModel(
+            twitch_name = streamer.twitch_name,
+            is_live = False
+        )
+
+        session.add(sm)
+        session.commit()
+        session.close()
+
+        await ctx.send(
+            f"{twitch_name} has been added to the system!"
+        )
+
+
+
+TOKEN = get_docker_secret('discord_token')
+
+print("SERVER IS RUNNING!")
 bot.run(TOKEN)
