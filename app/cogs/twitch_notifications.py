@@ -1,8 +1,8 @@
 from discord.ext import commands, tasks
-from app.aux.twitch_aux import Twitch_Aux
+from aux.twitch_aux import Twitch_Aux
 
-from app.database.models import StreamerModel
-from app.main import Session
+from database.models import StreamerModel
+from main import Session
 
 from sqlalchemy import select
 
@@ -24,6 +24,9 @@ class Twitch_Notifications(commands.Cog):
             curr_streamer: Twitch_Aux = Twitch_Aux(db_streamer.twitch_name)
 
             if curr_streamer.is_live != db_streamer.is_live:
+                # subscriber_dict = dict()
+                # for subscruber in db_streamer
+
                 if curr_streamer.is_live:
                     await ctx.send(
                         f"{curr_streamer.twitch_name} is now live!\n"
