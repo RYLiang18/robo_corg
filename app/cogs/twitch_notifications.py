@@ -11,7 +11,7 @@ class Twitch_Notifications(commands.Cog):
         self.client = client
         self.listener_status = False
 
-    @tasks.loop(seconds=10)
+    @tasks.loop(seconds=60)
     async def twitch_listener(self, ctx):
         print("initiating loop")
 

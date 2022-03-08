@@ -68,4 +68,4 @@ session.commit()
 # ///////////////////////////////////
 session.close()
 
-print("no errors? noice")
+print("SEED DATA MIGRATED!")
