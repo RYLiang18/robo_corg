@@ -1,5 +1,10 @@
 from discord.ext import commands, tasks
+from app.aux.twitch_aux import Twitch_Aux
 
+from app.database.models import StreamerModel
+from app.main import Session
+
+from sqlalchemy import select
 
 class Twitch_Notifications(commands.Cog):
     def __init__(self, client) -> None:
@@ -8,8 +13,31 @@ class Twitch_Notifications(commands.Cog):
 
     @tasks.loop(seconds=10)
     async def twitch_listener(self, ctx):
-        await ctx.send("loop")
+        print("initiating loop")
 
+        session = Session()
+        
+        select_streamers_query = select(StreamerModel).order_by(StreamerModel.id)
+
+        for row in session.execute(select_streamers_query):
+            db_streamer : StreamerModel = row.StreamerModel
+            curr_streamer: Twitch_Aux = Twitch_Aux(db_streamer.twitch_name)
+
+            if curr_streamer.is_live != db_streamer.is_live:
+                if curr_streamer.is_live:
+                    await ctx.send(
+                        f"{curr_streamer.twitch_name} is now live!\n"
+                        f"Go check it out on {curr_streamer.get_stream_link()}\n"
+                    )
+                else:
+                    await ctx.send(
+                        f"{curr_streamer.twitch_name} is now offline"
+                    )
+            
+                db_streamer.is_live = curr_streamer.is_live
+                session.commit()
+        session.close()
+    
     @commands.command()
     async def start_twitch_notifs(self, ctx):
         await ctx.send("twitch live notifications STARTING...")
@@ -18,12 +46,7 @@ class Twitch_Notifications(commands.Cog):
     @commands.command()
     async def stop_twitch_notifs(self, ctx):
         await ctx.send("twitch live notifications STOPPING...")
-        self.twitch_listener.cancel()
-
-    # @commands.command()
-    # async def twitch_notifs_off(self, ctx):
-    #     await ctx.send("twitch live notifications STOPPING...")
-    #     twitch_listener.cancel()
+        self.twitch_listener.stop()
 
 def setup(client):
     client.add_cog(Twitch_Notifications(client))
