@@ -1,4 +1,3 @@
-from pip import main
 from twitchAPI.twitch import Twitch
 import os
 from get_docker_secret import get_docker_secret

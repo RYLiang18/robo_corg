@@ -10,6 +10,9 @@ https://stackoverflow.com/questions/25668092/flask-sqlalchemy-many-to-many-inser
 To run a container interactively from docker-compose
     - if it's still running:
         - `docker-compose exec <service-name> bash`
+        - to access db:
+            - docker-compose exec db bash
+            - mysql -u [db_user] -p
     - else:
         - `docker-compose run --rm <service-name>`
 

@@ -1,75 +1,37 @@
-from aux.twitch_aux import Twitch_Aux
+from twitchAPI.twitch import Twitch
+from get_docker_secret import get_docker_secret
+import pprint
 
-streamers_seed = [
-    # these discord ids are robocorg
-    {
-        'twitch_name':'Asmongold', 
-        'discord_id': '846904592372596736', 
-        'is_live':False
-    },
-    {
-        'twitch_name':'MTashed', 
-        'discord_id': '846904592372596736', 
-        'is_live':False
-    },
-    {
-        'twitch_name':'ludwig', 
-        'discord_id': '846904592372596736', 
-        'is_live':False
-    },
-    {
-        'twitch_name':'39daph', 
-        'discord_id': '846904592372596736', 
-        'is_live':False
-    },
-    {
-        'twitch_name':'fuslie', 
-        'discord_id': '846904592372596736', 
-        'is_live':False
-    },
-    {
-        'twitch_name':'lilypichu', 
-        'discord_id': '846904592372596736', 
-        'is_live':False
-    },
-    {
-        'twitch_name':'enviosity', 
-        'discord_id': '846904592372596736', 
-        'is_live':False
-    },
-    {
-        'twitch_name':'pokimane', 
-        'discord_id': '846904592372596736', 
-        'is_live':False
-    }
-]
+pp = pprint.PrettyPrinter(indent = 2)
+
+client_id = get_docker_secret('twitch_client_id')
+client_secret = get_docker_secret('twitch_client_secret')
+twitch = Twitch(client_id, client_secret)
+twitch.authenticate_app([])
+
+
+streams = twitch.get_streams()['data'][0:5]
+
+streamers_seed = []
+richard_phone_number = '9493946676'
+richard_discord_id = '319238198670917632'
+
+for stream in streams:
+    streamers_seed.append({
+        'twitch_name': stream['user_name'],
+        'is_live': False
+    })
 
 subscribers_seed = [
     {
-        'phone_number': '19498912046',
-        'discord_id': '844378570633379880'
-    },
-    {
-        'phone_number': '19492290909',
-        'discord_id': '844378570633379880'
-    },
+        'phone_number': richard_phone_number,
+        'discord_id': richard_discord_id
+    }
 ]
 
 relationship_seed = [
     {
-        'phone_number':'19498912046',
-        'twitch_name': 'okcode'
+        'phone_number': richard_phone_number,
+        'twitch_name': streamers_seed[0]['twitch_name']
     },
-    {
-        'phone_number':'19498912046',
-        'twitch_name': 'lilypichu'
-    },
-    {
-        'phone_number':'19492290909',
-        'twitch_name': 'tenhatv'
-    },
-    {
-        'phone_number':'19492290909',
-        'twitch_name': 'enviosity'
-    }
 ]
