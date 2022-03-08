@@ -1,28 +1,15 @@
-import os
 import pprint
-from unicodedata import name
+import sys
 from get_docker_secret import get_docker_secret
-
 
 # discord.py imports
 import discord
-from discord.ext import tasks, commands
-from discord.utils import get
-
-# aux imports
-from aux.twitch_aux import Twitch_Aux
-from aux.twilio_aux import Twilio_Aux
-from aux.other import (
-    check_phone_number_in_dms,
-    extract_phone_number
-)
+from discord.ext import commands
 
 # sqlalchemy and database imports
-from sqlalchemy import create_engine, select, func
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from database.models import (
-    StreamerModel, SubscriberModel
-)
+
 
 
 # ///////////////////// STARTING UP /////////////////////
@@ -41,6 +28,9 @@ engine = create_engine(
 )
 
 Session = sessionmaker(bind=engine)
+
+# add current working directory to path so we can import stuff from it
+sys.path.append('.')
 
 cogs = [
     'cogs.bot',
