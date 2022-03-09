@@ -24,6 +24,21 @@ Storing Secrets like API keys in Docker-compose
 https://www.rockyourcode.com/using-docker-secrets-with-docker-compose/#:~:text=You%20can%20access%20the%20secrets,secrets%20are%20stored%20as%20files.
 
 
+WHAT TO DO IF ACCIDENTALLY PUSHED SENSITIVE DATA TO REPO?
+- use BFG repo cleaner
+    - https://rtyley.github.io/bfg-repo-cleaner/
+- sudo apt install openjdk-11-jdk to run the bfg.jar file
+    1. git clone --bare <git@repo.git>
+    2. java -jar bfg.jar --replace-text <txt file w all strings you want to replace> <cloned_repo.git>
+    3. cd <cloned_repo.git>
+    4. git reflog expire --expire=now --all && git gc --prune=now --aggressive
+    5. git push --mirror <git@repo.git>
+    6. navigate to your workspace
+    7. make backup with `git branch backup-main`
+    8. git reset --hard origin/main
+    9. pray everything went well T.T
+
+
 https://www.reddit.com/r/Discord_Bots/comments/j9gjf3/how_to_check_for_stop_message_during_loop/
 https://stackoverflow.com/questions/64768225/how-can-i-break-a-loop-in-a-discord-py-command-upon-execution-of-another-command
 https://www.geeksforgeeks.org/python-import-from-parent-directory/
