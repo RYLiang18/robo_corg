@@ -1,10 +1,8 @@
 from twitchAPI.twitch import Twitch
 from get_docker_secret import get_docker_secret
 import pprint
-import sys
 
 pp = pprint.PrettyPrinter(indent = 2)
-pp.pprint(sys.path)
 
 client_id = get_docker_secret('twitch_client_id')
 client_secret = get_docker_secret('twitch_client_secret')

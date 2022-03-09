@@ -3,8 +3,8 @@ from get_docker_secret import get_docker_secret
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import sessionmaker
 
-from database.models import (
-    base, StreamerModel, SubscriberModel
+from models import (
+    StreamerModel, SubscriberModel
 )
 
 from seed_data import (
