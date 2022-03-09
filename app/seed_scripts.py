@@ -1,5 +1,3 @@
-# import mysql.connector
-import os
 from get_docker_secret import get_docker_secret
 
 from sqlalchemy import create_engine, select
@@ -70,4 +68,4 @@ session.commit()
 # ///////////////////////////////////
 session.close()
 
-print("no errors? noice")
+print("SEED DATA MIGRATED!")

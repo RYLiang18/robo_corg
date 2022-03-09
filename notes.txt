@@ -10,6 +10,9 @@ https://stackoverflow.com/questions/25668092/flask-sqlalchemy-many-to-many-inser
 To run a container interactively from docker-compose
     - if it's still running:
         - `docker-compose exec <service-name> bash`
+        - to access db:
+            - docker-compose exec db bash
+            - mysql -u [db_user] -p
     - else:
         - `docker-compose run --rm <service-name>`
 
@@ -19,3 +22,13 @@ Q: why can't my python program connect to `db/3306` during `docker-compose up`
 Storing Secrets like API keys in Docker-compose
 - I guess the only way to do it so far is using docker-compose, and not dockerfile
 https://www.rockyourcode.com/using-docker-secrets-with-docker-compose/#:~:text=You%20can%20access%20the%20secrets,secrets%20are%20stored%20as%20files.
+
+
+https://www.reddit.com/r/Discord_Bots/comments/j9gjf3/how_to_check_for_stop_message_during_loop/
+https://stackoverflow.com/questions/64768225/how-can-i-break-a-loop-in-a-discord-py-command-upon-execution-of-another-command
+https://www.geeksforgeeks.org/python-import-from-parent-directory/
+
+
+TODO:
+- refactor twitch_aux and twilio_aux
+- move seed data and seed scripts into database folder
