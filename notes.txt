@@ -27,3 +27,8 @@ https://www.rockyourcode.com/using-docker-secrets-with-docker-compose/#:~:text=Y
 https://www.reddit.com/r/Discord_Bots/comments/j9gjf3/how_to_check_for_stop_message_during_loop/
 https://stackoverflow.com/questions/64768225/how-can-i-break-a-loop-in-a-discord-py-command-upon-execution-of-another-command
 https://www.geeksforgeeks.org/python-import-from-parent-directory/
+
+
+TODO:
+- refactor twitch_aux and twilio_aux
+- move seed data and seed scripts into database folder
