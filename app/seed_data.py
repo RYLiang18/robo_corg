@@ -13,7 +13,7 @@ twitch.authenticate_app([])
 streams = twitch.get_streams()['data'][0:5]
 
 streamers_seed = []
-richard_phone_number = '***REMOVED***'
+richard_phone_number = get_docker_secret('giich_phone_number')
 richard_discord_id = '319238198670917632'
 
 for stream in streams:

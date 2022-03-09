@@ -37,8 +37,8 @@ class Twitch_Notifications(commands.Cog):
                     sub_name = self.client.get_user(int(subscriber.discord_id)).name
                     subscriber_dict[sub_phone] = sub_name
 
-                twilio_aux = Twilio_Aux(subscriber_dict)
-                twilio_aux.send_messages(curr_streamer)
+                # twilio_aux = Twilio_Aux(subscriber_dict)
+                # twilio_aux.send_messages(curr_streamer)
                 # /////////////////////////////////
 
                 if curr_streamer.is_live:

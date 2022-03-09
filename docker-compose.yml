@@ -21,6 +21,8 @@ secrets:
   twitch_client_secret:
     file: ./secrets/twitch/twitch_client_secret.txt
 
+  giich_phone_number:
+    file: ./secrets/giich_phone_number.txt
 services:
   bot:
     build: ./app
@@ -36,6 +38,8 @@ services:
       
       - twitch_client_id
       - twitch_client_secret
+
+      - giich_phone_number
     
     depends_on:
       db:

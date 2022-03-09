@@ -1,5 +1,5 @@
 import pprint
-import sys
+# import sys
 from get_docker_secret import get_docker_secret
 
 # discord.py imports
@@ -30,7 +30,7 @@ engine = create_engine(
 Session = sessionmaker(bind=engine)
 
 # add current working directory to path so we can import stuff from it
-sys.path.append('.')
+# sys.path.append('.')
 
 cogs = [
     'cogs.bot',
