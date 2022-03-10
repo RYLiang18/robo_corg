@@ -7,7 +7,7 @@ from aux.other import (
 )
 
 from database.models import StreamerModel, SubscriberModel
-from main import Session
+from database import Session
 
 from sqlalchemy import select
 

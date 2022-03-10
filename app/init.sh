@@ -1,4 +1,4 @@
 #!/bin/bash
 
-python -u ./database/seed_scripts.py
+python -u seed_script.py
 python -u main.py
