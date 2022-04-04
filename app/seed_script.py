@@ -11,11 +11,11 @@ from database.seed_data import (
 
 # overwrite db_init/init.sql since that doesn't have the phone_numbers
 # column in subscribers table as bytes yet
-from database.models import base
-from database import engine
+# from database.models import base
+# from database import engine
 
-base.metadata.drop_all(engine)
-base.metadata.create_all(bind=engine)
+# base.metadata.drop_all(engine)
+# base.metadata.create_all(bind=engine)
 
 session = Session()
 

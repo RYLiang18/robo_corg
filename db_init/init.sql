@@ -7,7 +7,7 @@ CREATE TABLE STREAMER_TBL (
 
 CREATE TABLE SUBSCRIBER_TBL (
     `id` int NOT NULL AUTO_INCREMENT,
-    `phone_number` varchar(100) DEFAULT NULL,
+    `phone_number` tinyblob,
     `discord_id` varchar(100) DEFAULT NULL,
     PRIMARY KEY (`id`)
 );
