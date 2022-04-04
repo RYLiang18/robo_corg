@@ -44,7 +44,8 @@ class Twitch_Notifications(commands.Cog):
             if curr_streamer.is_live != db_streamer.is_live:
                 
                 print(f"{curr_streamer.twitch_name}\'s subscriber\'s phone numbers:")
-                # //// texting ////////////////////
+                
+                # building phone_number:subscriber_name dictionary
                 subscriber_dict = dict()
                 for subscriber in db_streamer.subscribers:
                     sub_phone = decrypt(subscriber.phone_number)
@@ -52,22 +53,39 @@ class Twitch_Notifications(commands.Cog):
                     subscriber_dict[sub_phone] = sub_name
                     print(sub_phone)
 
-                # save money$
-                # twilio_aux = Twilio_Aux(subscriber_dict)
-                # twilio_aux.send_messages(curr_streamer)
-                # /////////////////////////////////
+                twilio_aux = Twilio_Aux()
 
                 # CASE 1: the current streamer went live
                 if curr_streamer.is_live:
+                    # messaging the discord
                     await ctx.send(
                         f"{curr_streamer.twitch_name} is now live!\n"
                         f"Go check it out on {curr_streamer.get_stream_link()}\n"
                     )
+
+                    # texting subscribers
+                    for phone_number, subscriber_name in subscriber_dict.items():
+                        twilio_aux.send_message(
+                            phone_number= phone_number,
+                            body= (
+                                f"🤖hello {subscriber_name}, robo-corg reporting:🤖;\n"
+                                f"{curr_streamer.twitch_name} is now streaming \"{curr_streamer.title}\"\n"
+                                f"Playing {curr_streamer.game}\n"
+                                f"Go check it out on {curr_streamer.get_stream_link()}\n"
+                            )
+                        )
                 else:
                 # CASE 2: the current streamer went offline
                     await ctx.send(
                         f"{curr_streamer.twitch_name} is now offline"
                     )
+                    
+                    # texting subscribers
+                    for phone_number, subscriber_name in subscriber_dict.items():
+                        twilio_aux.send_message(
+                            phone_number = phone_number,
+                            body= f"{curr_streamer.twitch_name} is now offline"
+                        )
             
                 db_streamer.is_live = curr_streamer.is_live
                 session.commit()
