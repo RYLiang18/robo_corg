@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Boolean, Table
+from sqlalchemy import Column, Integer, String, Boolean, Table, LargeBinary
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.orm import relationship
 
@@ -36,7 +36,7 @@ class SubscriberModel(base):
         Integer,
         primary_key=True
     )
-    phone_number = Column('phone_number', String(100))
+    phone_number = Column('phone_number', LargeBinary(100))
     discord_id = Column('discord_id', String(100))
 
 

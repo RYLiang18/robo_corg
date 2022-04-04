@@ -100,7 +100,7 @@ class Twitch_Notifications(commands.Cog):
                 phone_number = extract_phone_number(resp)
                 
                 # TODO: encrypt phone number
-
+                
 
                 # creating new subscriber based on schema and adding relationship
                 # to STREAMBER_TBL
