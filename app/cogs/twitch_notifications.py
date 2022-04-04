@@ -182,7 +182,7 @@ class Twitch_Notifications(commands.Cog):
         streamer: Twitch_Aux = Twitch_Aux(twitch_name)
 
         # CASE 1: the streamer DOESN'T exist on Twitch
-        if streamer.stream_info is None:
+        if not streamer.exists():
             await ctx.send(
                 f"there isn't a twitch streamer named {twitch_name}\n"
             )

@@ -41,3 +41,7 @@ class Twitch_Aux():
     
     def get_stream_link(self):
         return f"https://www.twitch.tv/{self.twitch_name}"
+    
+    def exists(self):
+        # self.stream_info isn't []
+        return self.stream_info is not None
