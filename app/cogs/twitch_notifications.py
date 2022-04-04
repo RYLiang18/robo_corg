@@ -92,11 +92,16 @@ class Twitch_Notifications(commands.Cog):
                     f"robo-corg promises to keep this information confidential!"
                 )
 
+                # retreive response from subscriber DMs
+                # extract phone number from response
                 resp = (
                     await self.client.wait_for('message', check=check_phone_number_in_dms)
                 ).content
                 phone_number = extract_phone_number(resp)
                 
+                # TODO: encrypt phone number
+
+
                 # creating new subscriber based on schema and adding relationship
                 # to STREAMBER_TBL
                 new_sub = SubscriberModel(

@@ -23,6 +23,10 @@ secrets:
 
   giich_phone_number:
     file: ./secrets/giich_phone_number.txt
+  
+  fernet_key:
+    file: ./secrets/fernet_key.txt
+
 services:
   bot:
     build: ./app
@@ -30,7 +34,7 @@ services:
     secrets:
       - db_user
       - db_pwd
-      
+
       - twilio_auth_token
       - twilio_sid
       
@@ -40,6 +44,7 @@ services:
       - twitch_client_secret
 
       - giich_phone_number
+      - fernet_key
     
     depends_on:
       db:

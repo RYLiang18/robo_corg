@@ -1,11 +1,15 @@
 import re
 from discord import Message
+from get_docker_secret import get_docker_secret
+from cryptography.fernet import Fernet
 
 # phone number regex from
 # https://stackoverflow.com/questions/3868753/find-phone-numbers-in-python-script
 r = re.compile(
     r'(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]??\d{4})'
 )
+fernet_key = bytes(get_docker_secret('fernet_key'), 'utf-8')
+f = Fernet(fernet_key)
 
 def check_phone_number_in_dms(msg: Message):
     if not msg.author.bot and msg.channel == msg.author.dm_channel:
@@ -21,3 +25,8 @@ def extract_phone_number(phone_number: str):
     numeric_filter = filter(str.isdigit, raw_str)
     return "".join(numeric_filter)
 
+def encrypt(phone_number: str):
+    return f.encrypt(bytes(phone_number, 'utf-8'))
+
+def decrypt(encrypted_phone_number: bytes):
+    return f.decrypt(encrypted_phone_number).decode('utf-8')
