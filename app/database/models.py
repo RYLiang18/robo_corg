@@ -16,8 +16,15 @@ association_table = Table(
     )
 )
 
-
 class StreamerModel(base):
+    """
+    SQLAlchemy Schema for the Streamer Table
+
+    :id: <int> <primary key> Streamer ID in the database
+    :twitch_name: <str> streamer's twitch name
+    :is_live: <bool> 0 = offline, 1 = live
+    :subscribers: <relationship> so each streamer can access their subscribers in SUBSCRIBER_TBL
+    """
     __tablename__ = "STREAMER_TBL"
     id = Column(
         'id', Integer, primary_key=True
@@ -30,6 +37,13 @@ class StreamerModel(base):
     )
 
 class SubscriberModel(base):
+    """
+    SQLAlchemy Schema for the Subscriber Table
+
+    :id: <int> <primary key> subscriber's ID in the database
+    :phone_number: <bytes> the subscriber's encrypted phone number
+    :discord_id: <str> the subscriber's discord ID
+    """
     __tablename__ = "SUBSCRIBER_TBL"
     id = Column(
         'id',
@@ -38,13 +52,3 @@ class SubscriberModel(base):
     )
     phone_number = Column('phone_number', LargeBinary(100))
     discord_id = Column('discord_id', String(100))
-
-
-# class RelationshipModel(base):
-#     __tablename__ = "RELATIONSHIP_TBL"
-#     streamer_id = Column(
-#         'streamer_id', ForeignKey('STREAMER_TBL.id'), primary_key=True
-#     )
-#     subscriber_id = Column(
-#         'subscriber_id', ForeignKey('SUBSCRIBER_TBL.id'), primary_key=True
-#     )

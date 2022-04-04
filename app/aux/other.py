@@ -12,6 +12,12 @@ fernet_key = bytes(get_docker_secret('fernet_key'), 'utf-8')
 f = Fernet(fernet_key)
 
 def check_phone_number_in_dms(msg: Message):
+    """
+    function to validate response when bot DMs user asking for their phone number
+
+    :param msg: <Message> a reference to the user's response to bot DM in Discord
+    :return: <bool>
+    """
     if not msg.author.bot and msg.channel == msg.author.dm_channel:
         print("msg in DM channel")
         match = r.search(msg.content)
