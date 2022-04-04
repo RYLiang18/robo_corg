@@ -3,7 +3,9 @@ from aux.twitch_aux import Twitch_Aux
 from aux.twilio_aux import Twilio_Aux
 from aux.other import (
     check_phone_number_in_dms,
-    extract_phone_number
+    extract_phone_number,
+    encrypt,
+    decrypt,
 )
 
 from database.models import StreamerModel, SubscriberModel
@@ -29,14 +31,17 @@ class Twitch_Notifications(commands.Cog):
             curr_streamer: Twitch_Aux = Twitch_Aux(db_streamer.twitch_name)
 
             if curr_streamer.is_live != db_streamer.is_live:
-
+                
+                print(f"{curr_streamer.twitch_name}\'s subscriber\'s phone numbers:")
                 # //// texting ////////////////////
                 subscriber_dict = dict()
                 for subscriber in db_streamer.subscribers:
-                    sub_phone = subscriber.phone_number
+                    sub_phone = decrypt(subscriber.phone_number)
                     sub_name = self.client.get_user(int(subscriber.discord_id)).name
                     subscriber_dict[sub_phone] = sub_name
+                    print(sub_phone)
 
+                # save money$
                 # twilio_aux = Twilio_Aux(subscriber_dict)
                 # twilio_aux.send_messages(curr_streamer)
                 # /////////////////////////////////
@@ -92,22 +97,32 @@ class Twitch_Notifications(commands.Cog):
                     f"robo-corg promises to keep this information confidential!"
                 )
 
+                # retreive response from subscriber DMs
+                # extract phone number from response
                 resp = (
                     await self.client.wait_for('message', check=check_phone_number_in_dms)
                 ).content
                 phone_number = extract_phone_number(resp)
                 
+                # encrypt phone number
+                encrypted_phone_number = encrypt(phone_number)
+
                 # creating new subscriber based on schema and adding relationship
                 # to STREAMBER_TBL
                 new_sub = SubscriberModel(
-                    phone_number = phone_number,
+                    phone_number = encrypted_phone_number,
                     discord_id = str(ctx.author.id)
                 )
                 streamer.subscribers.append(new_sub)
-                twilio_aux.send_custom_message(
-                    phone_number, 
-                    f"You are now subscribed to {streamer.twitch_name}!"
-                )
+
+                # save money$
+                # twilio_aux.send_custom_message(
+                #     phone_number, 
+                #     f"You are now subscribed to {streamer.twitch_name}!"
+                # )
+
+            session.commit()
+            session.close()
 
     @commands.command()
     async def add_streamer(self, ctx, twitch_name):

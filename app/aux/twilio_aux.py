@@ -44,7 +44,7 @@ class Twilio_Aux():
     def send_custom_message(self, phone_number: str, body: str):
         self.client.messages.create(
             body = body,
-            from_= phone_number,
+            from_= self.twilio_phone,
             to = phone_number
         )
         
