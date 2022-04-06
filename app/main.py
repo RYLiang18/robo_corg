@@ -13,7 +13,8 @@ bot = commands.Bot(command_prefix='!robocorg ', intents=intents)
 
 cogs = [
     'cogs.bot',
-    'cogs.twitch_notifications'
+    'cogs.twitch_notifications',
+    'cogs.twitch_notifications_util'
 ]
 
 for cog in cogs:

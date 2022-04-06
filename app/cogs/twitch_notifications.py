@@ -122,16 +122,12 @@ class Twitch_Notifications(commands.Cog):
         # query Streamer with 'twitch_name' from STREAMER_TBL to see if 
         # the streamer user wants to subscribe to exists
         session = Session()
-        streamer : StreamerModel = session.query(StreamerModel).filter(
-            StreamerModel.twitch_name.ilike(f"%{twitch_name}%")
-        ).first()
+        streamer : StreamerModel = get_streamer_from_db(twitch_name, session)
 
         # query Subscriber with 'sender_id' from SUBSCRIBER_TBL
         # if this subscriber already exists in the DB, we just create a relation
         # between existing subscriber and the streamer
-        subscriber: SubscriberModel = session.query(SubscriberModel).filter(
-            SubscriberModel.discord_id.ilike(f"%{sender_id}%")
-        ).first()
+        subscriber: SubscriberModel = get_subscriber_from_db(sender_id, session)
 
         if streamer is not None:
             # CASE 1: subscriber already exists
@@ -202,6 +198,20 @@ class Twitch_Notifications(commands.Cog):
             await ctx.send(
                 f"{twitch_name} has been added to the system!"
             )
+    
+
+def get_streamer_from_db(twitch_username:str, session):
+    streamer = session.query(StreamerModel).filter(
+        StreamerModel.twitch_name.ilike(f"%{twitch_username}%")
+    ).first()
+    return streamer        
+
+def get_subscriber_from_db(subscriber_discord_id:str, session):
+    subscriber = session.query(SubscriberModel).filter(
+        SubscriberModel.discord_id.ilike(f"%{subscriber_discord_id}%")
+    ).first()
+    return subscriber
+        
 
 def setup(client):
     client.add_cog(Twitch_Notifications(client))
