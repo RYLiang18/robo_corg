@@ -181,19 +181,28 @@ class Twitch_Notifications(commands.Cog):
             )
         else:
         # CASE 2: the streamer DOES exist on Twitch
-            # TODO: check first if the streamer already exists in the DB first!
             with Session() as session:
-                sm = StreamerModel(
-                    twitch_name = streamer.twitch_name,
-                    is_live = False
-                )
+                # check first if the streamer we want to add is already in the db!!
+                db_streamer : StreamerModel = get_streamer_from_db(twitch_name, session)
+                
+                # CASE 1: streamer already exists in the database => we do nothing
+                if db_streamer is not None:
+                    await ctx.send(
+                        f"{twitch_name} is already in the system!"
+                    )
+                else:
+                # CASE 2: streamer doesn't exist in the DB yet, we create a new streamer
+                    sm = StreamerModel(
+                        twitch_name = streamer.twitch_name,
+                        is_live = False
+                    )
 
-                session.add(sm)
-                session.commit()
+                    session.add(sm)
+                    session.commit()
 
-                await ctx.send(
-                    f"{twitch_name} has been added to the system!"
-                )
+                    await ctx.send(
+                        f"{twitch_name} has been added to the system!"
+                    )
     
 
 def get_streamer_from_db(twitch_username:str, session):
