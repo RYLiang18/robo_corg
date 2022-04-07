@@ -11,7 +11,7 @@ from aux.other import (
 from database.models import StreamerModel, SubscriberModel
 from database import Session
 
-from sqlalchemy import select
+from sqlalchemy import select, and_
 
 class Twitch_Notifications(commands.Cog):
     def __init__(self, client) -> None:
@@ -64,15 +64,17 @@ class Twitch_Notifications(commands.Cog):
 
                         # texting subscribers
                         for phone_number, subscriber_name in subscriber_dict.items():
-                            twilio_aux.send_message(
-                                phone_number= phone_number,
-                                body= (
-                                    f"🤖hello {subscriber_name}, robo-corg reporting:🤖;\n"
-                                    f"{curr_streamer.twitch_name} is now streaming \"{curr_streamer.title}\"\n"
-                                    f"Playing {curr_streamer.game}\n"
-                                    f"Go check it out on {curr_streamer.get_stream_link()}\n"
-                                )
-                            )
+                            # commenting out to save some twilio money
+                            # twilio_aux.send_message(
+                            #     phone_number= phone_number,
+                            #     body= (
+                            #         f"🤖hello {subscriber_name}, robo-corg reporting:🤖;\n"
+                            #         f"{curr_streamer.twitch_name} is now streaming \"{curr_streamer.title}\"\n"
+                            #         f"Playing {curr_streamer.game}\n"
+                            #         f"Go check it out on {curr_streamer.get_stream_link()}\n"
+                            #     )
+                            # )
+                            pass
                     else:
                     # CASE 2: the current streamer went offline
                         await ctx.send(
@@ -81,10 +83,12 @@ class Twitch_Notifications(commands.Cog):
                         
                         # texting subscribers
                         for phone_number, subscriber_name in subscriber_dict.items():
-                            twilio_aux.send_message(
-                                phone_number = phone_number,
-                                body= f"{curr_streamer.twitch_name} is now offline"
-                            )
+                            # commenting out to save some twilio money
+                            # twilio_aux.send_message(
+                            #     phone_number = phone_number,
+                            #     body= f"{curr_streamer.twitch_name} is now offline"
+                            # )
+                            pass
                 
                     db_streamer.is_live = curr_streamer.is_live
                     session.commit()
@@ -165,6 +169,56 @@ class Twitch_Notifications(commands.Cog):
                 session.commit()
 
     @commands.command()
+    async def unsubscribe_from(self, ctx, twitch_name):
+        """
+        command for user to unsubscribe their phone number from receiving text
+        notifications when <twitch_name> streamer goes live/offline
+
+        :param twitch_name: <str> the streamer's twitch username (ex. "asmongold")
+        """
+        # check if <twitch_name> is even a twitch streamer
+        streamer:Twitch_Aux = Twitch_Aux(twitch_name)
+        if not streamer.exists():
+            await ctx.send(
+                f"err: there isn't a twitch streamer named {twitch_name}\n"
+            )
+
+        # get the user's id
+        user_id = str(ctx.author.id)
+
+        with Session() as session:
+            # check if the user is subscribed to <twitch_name> by cross-referencing
+            # discord IDs
+            # 
+            # select streamer 
+            # where name = twitch_name and has sub with discord id = user_id
+            select_stmt = (
+                select(StreamerModel).
+                where(
+                    and_(
+                        StreamerModel.subscribers.any(
+                            SubscriberModel.discord_id==user_id
+                        ),
+                        StreamerModel.twitch_name == twitch_name
+                    )
+                )
+            )
+
+            # execute the 
+            stmt_result = session.execute(select_stmt)
+            first_row = stmt_result.first()
+            
+            # CASE 1: you weren't originally subscribed to 
+            if not first_row:
+                await ctx.send(
+                    f"err: you weren\'t originally subscribed to {twitch_name}"
+                )
+            else:
+                db_streamer : StreamerModel = first_row.StreamerModel
+
+                print(f"{db_streamer.id} : {db_streamer.twitch_name}")
+
+    @commands.command()
     async def add_streamer(self, ctx, twitch_name):
         """
         command for user to add a streamer to twitch_notifications system
@@ -203,7 +257,6 @@ class Twitch_Notifications(commands.Cog):
                     await ctx.send(
                         f"{twitch_name} has been added to the system!"
                     )
-    
 
 def get_streamer_from_db(twitch_username:str, session):
     streamer = session.query(StreamerModel).filter(
