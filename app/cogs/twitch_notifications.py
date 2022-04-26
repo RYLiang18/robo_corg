@@ -215,8 +215,9 @@ class Twitch_Notifications(commands.Cog):
                 )
             else:
                 db_streamer : StreamerModel = first_row.StreamerModel
-
-                print(f"{db_streamer.id} : {db_streamer.twitch_name}")
+                curr_subscriber : SubscriberModel = get_subscriber_from_db(user_id)
+                db_streamer.subscribers.remove(curr_subscriber)
+                
 
     @commands.command()
     async def add_streamer(self, ctx, twitch_name):

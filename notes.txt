@@ -44,6 +44,15 @@ https://stackoverflow.com/questions/64768225/how-can-i-break-a-loop-in-a-discord
 https://www.geeksforgeeks.org/python-import-from-parent-directory/
 
 
+docker-compose up -d
+    - run the containers in the background
+docker-compose logs -f <name of service>
+    - get the logs for the docker container and follow them
+
+TO REBUILD THE BOT WITH CHANGES, WITHOUT DISRUPTING THE DB:
+docker-compose up --detach --build <service>
+docker-compose up --detach --build bot
+
 TODO:
 - refactor twitch_aux and twilio_aux
 - move seed data and seed scripts into database folder

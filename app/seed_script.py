@@ -18,45 +18,16 @@ from database.seed_data import (
 # base.metadata.create_all(bind=engine)
 
 with Session() as session:
-
-    # populating STREAMER_TBL
-    for streamer_info in streamers_seed:
-        streamer = StreamerModel(
-            twitch_name = streamer_info['twitch_name'],
-            is_live = streamer_info['is_live']
-        )
-        
-        session.add(streamer)
-    session.commit()
-
-    # populating SUBSCRIBER_TBL
-    # for sub_info in subscribers_seed:
-    #     subscriber = SubscriberModel(
-    #         phone_number = sub_info['phone_number'],
-    #         discord_id = sub_info['discord_id']
-    #     )
-
-    #     session.add(subscriber)
-    # session.commit()
-
-    # populating RELATIONSHIP_TBL
-    # for relationship_info in relationship_seed:
-    #     select_streamer = select(StreamerModel).where(
-    #         StreamerModel.twitch_name == relationship_info['twitch_name']
-    #     )
-    #     streamer = session.execute(select_streamer).first().StreamerModel
-    #     # print(streamer.twitch_name)
-        
-    #     select_subscriber = select(SubscriberModel).where(
-    #         SubscriberModel.phone_number == relationship_info['phone_number']
-    #     )
-    #     subscriber = session.execute(select_subscriber).first().SubscriberModel
-    #     # print(subscriber.phone_number)
-
-    #     streamer.subscribers.append(subscriber)
-    # session.commit()
-
-    # ///////////////////////////////////
-    # session.close()
+    # checking if tables are empty
+    if session.query(StreamerModel).first() is None:
+        # populating STREAMER_TBL
+        for streamer_info in streamers_seed:
+            streamer = StreamerModel(
+                twitch_name = streamer_info['twitch_name'],
+                is_live = streamer_info['is_live']
+            )
+            
+            session.add(streamer)
+        session.commit()
 
 print("SEED DATA MIGRATED!")
