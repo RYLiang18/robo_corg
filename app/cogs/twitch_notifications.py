@@ -16,7 +16,8 @@ from sqlalchemy import select, and_
 class Twitch_Notifications(commands.Cog):
     def __init__(self, client) -> None:
         self.client = client
-        self.listener_status = False
+        self.twitch_listner_status = False 
+        self.texting_status = False
 
     @tasks.loop(seconds=60)
     async def twitch_listener(self, ctx):
@@ -63,18 +64,17 @@ class Twitch_Notifications(commands.Cog):
                         )
 
                         # texting subscribers
-                        for phone_number, subscriber_name in subscriber_dict.items():
-                            # commenting out to save some twilio money
-                            # twilio_aux.send_message(
-                            #     phone_number= phone_number,
-                            #     body= (
-                            #         f"🤖hello {subscriber_name}, robo-corg reporting:🤖;\n"
-                            #         f"{curr_streamer.twitch_name} is now streaming \"{curr_streamer.title}\"\n"
-                            #         f"Playing {curr_streamer.game}\n"
-                            #         f"Go check it out on {curr_streamer.get_stream_link()}\n"
-                            #     )
-                            # )
-                            pass
+                        if self.texting_status:
+                            for phone_number, subscriber_name in subscriber_dict.items():
+                                twilio_aux.send_message(
+                                    phone_number= phone_number,
+                                    body= (
+                                        f"🤖hello {subscriber_name}, robo-corg reporting:🤖;\n"
+                                        f"{curr_streamer.twitch_name} is now streaming \"{curr_streamer.title}\"\n"
+                                        f"Playing {curr_streamer.game}\n"
+                                        f"Go check it out on {curr_streamer.get_stream_link()}\n"
+                                    )
+                                )
                     else:
                     # CASE 2: the current streamer went offline
                         await ctx.send(
@@ -82,32 +82,46 @@ class Twitch_Notifications(commands.Cog):
                         )
                         
                         # texting subscribers
-                        for phone_number, subscriber_name in subscriber_dict.items():
-                            # commenting out to save some twilio money
-                            # twilio_aux.send_message(
-                            #     phone_number = phone_number,
-                            #     body= f"{curr_streamer.twitch_name} is now offline"
-                            # )
-                            pass
+                        if self.texting_status:
+                            for phone_number, subscriber_name in subscriber_dict.items():
+                                twilio_aux.send_message(
+                                    phone_number = phone_number,
+                                    body= f"{curr_streamer.twitch_name} is now offline"
+                                )
                 
                     db_streamer.is_live = curr_streamer.is_live
                     session.commit()
     
     @commands.command()
-    async def start_twitch_notifs(self, ctx):
+    @commands.has_permissions(administrator=True)
+    async def toggle_twitch_notifs(self, ctx):
         """
-        command to START `twitch_listener()` loop
+        command to toggle <twitch_listener()> loop between ON and OFF
         """
-        await ctx.send("twitch live notifications STARTING...")
-        self.twitch_listener.start(ctx)
-    
+        if self.twitch_listner_status is False:
+            self.twitch_listner_status = True
+
+            await ctx.send("twitch live notifications STARTING...")
+            self.twitch_listener.start(ctx)
+        else:
+            self.twitch_listner_status = False
+
+            await ctx.send("twitch live notifications STOPPING...")
+            self.twitch_listener.stop()
+
     @commands.command()
-    async def stop_twitch_notifs(self, ctx):
+    @commands.has_permissions(administrator=True)
+    async def toggle_texting(self, ctx):
         """
-        command to STOP `twitch_listener()` loop
+        command to toggle the texting-subscribers-feature ON or OFF
+        CAUTION: TEXTING WILL DRAW MONEY FROM TWILIO ACCOUNT
         """
-        await ctx.send("twitch live notifications STOPPING...")
-        self.twitch_listener.stop()
+        if self.texting_status is False:
+            self.texting_status = True
+            await ctx.send("texting is turned ON")
+        else:
+            self.texting_status = False
+            await ctx.send("texting is turned OFF")
 
     @commands.command()
     async def subscribe_to(self, ctx, twitch_name):
@@ -135,7 +149,7 @@ class Twitch_Notifications(commands.Cog):
                 # CASE 1: subscriber already exists
                 if subscriber is not None:
                     streamer.subscribers.append(subscriber)
-                    ctx.send("done")
+                    await ctx.send("done")
                 else:
                 # CASE 2: subscriber doesn't already exist 
                 # => we need to create a new row in SUBSCRIBER_TBL
@@ -167,7 +181,11 @@ class Twitch_Notifications(commands.Cog):
                 # to <STREAMER_NAME>
 
                 session.commit()
-
+            else:
+                await ctx.send(
+                    f"{twitch_name} isn't registered with robo-corg yet." 
+                    f"Please use `add_streamer` first."
+                )
     @commands.command()
     async def unsubscribe_from(self, ctx, twitch_name):
         """
