@@ -54,5 +54,5 @@ docker-compose up --detach --build <service>
 docker-compose up --detach --build bot
 
 TODO:
-- refactor twitch_aux and twilio_aux
-- move seed data and seed scripts into database folder
+- attempt to deploy to aws ecs (elastic container service)
+- command to remove streamer from robocorg
