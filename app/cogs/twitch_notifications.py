@@ -5,7 +5,7 @@ from aux.other import (
     check_phone_number_in_dms,
     extract_phone_number,
     encrypt,
-    decrypt,
+    decrypt
 )
 
 from database.models import StreamerModel, SubscriberModel
@@ -122,6 +122,26 @@ class Twitch_Notifications(commands.Cog):
         else:
             self.texting_status = False
             await ctx.send("texting is turned OFF")
+
+    @commands.command()
+    async def twitch_notifs_status(self, ctx):
+        """
+        command to check if <twitch_listener()> loop is running
+        """
+        if self.twitch_listner_status:
+            await ctx.send("Twitch Live notifications are ON")
+        else:
+            await ctx.send("Twitch Live notifications are OFF")
+    
+    @commands.command()
+    async def texting_status(self, ctx):
+        """
+        command to check if texting-subscribers-feature is enabled or disabled
+        """
+        if self.texting_status:
+            await ctx.send("Texting subscribers when streamer goes live is ENABLED")
+        else:
+            await ctx.send("Texting subscribers when streamer goes live is DISABLED")
 
     @commands.command()
     async def subscribe_to(self, ctx, twitch_name):
