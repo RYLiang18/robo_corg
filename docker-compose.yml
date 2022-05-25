@@ -72,4 +72,4 @@ services:
       - ./db_init:/docker-entrypoint-initdb.d
     
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: out=$$(mysqladmin ping -h localhost -P 3306 -u $$(cat $${MYSQL_USER_FILE}) --password=$$(cat $${MYSQL_PASSWORD_FILE}) 2>&1); echo $$out | grep 'mysqld is alive' || { echo $$out; exit 1; }
