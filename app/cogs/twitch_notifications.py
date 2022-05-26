@@ -297,6 +297,23 @@ class Twitch_Notifications(commands.Cog):
                         f"{twitch_name} has been added to the system!"
                     )
 
+    @commands.command()
+    async def remove_streamer(self, ctx, twitch_name):
+        with Session() as session:
+            db_streamer: StreamerModel = get_streamer_from_db(twitch_name, session)
+
+            if db_streamer is not None:
+                session.delete(db_streamer)
+                
+                await ctx.send(
+                    f"Sad to see you go, {twitch_name}"
+                )
+            else:
+                await ctx.send(
+                    f"{twitch_name} is not in the system."
+                )
+            session.commit()
+
 def get_streamer_from_db(twitch_username:str, session):
     streamer = session.query(StreamerModel).filter(
         StreamerModel.twitch_name.ilike(f"%{twitch_username}%")
