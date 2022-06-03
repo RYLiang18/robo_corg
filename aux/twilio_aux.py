@@ -1,5 +1,4 @@
 from twilio.rest import Client
-# from get_docker_secret import get_docker_secret
 import os
 
 

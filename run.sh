@@ -8,5 +8,6 @@ docker run \
     giich_robocorg_image:latest \
     $usr_cmd
 
+# cleaning up
 docker container rm giich_robocorg_container
 docker image rm giich_robocorg_image:latest
