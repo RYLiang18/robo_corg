@@ -1,6 +1,7 @@
 import re
 from discord import Message
-from get_docker_secret import get_docker_secret
+import os
+# from get_docker_secret import get_docker_secret
 from cryptography.fernet import Fernet
 
 # phone number regex from
@@ -8,7 +9,7 @@ from cryptography.fernet import Fernet
 r = re.compile(
     r'(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]??\d{4})'
 )
-fernet_key = bytes(get_docker_secret('fernet_key'), 'utf-8')
+fernet_key = bytes(os.environ.get('fernet_key'), 'utf-8')
 f = Fernet(fernet_key)
 
 def check_phone_number_in_dms(msg: Message):

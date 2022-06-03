@@ -54,5 +54,8 @@ docker-compose up --detach --build <service>
 docker-compose up --detach --build bot
 
 TODO:
+- attempt to use heroku postgres instead of local mysql
+    - if this works, no longer need mysql container
+    - can revert to just dockerfile
+    - deploy on heroku
 - attempt to deploy to aws ecs (elastic container service)
-- command to remove streamer from robocorg

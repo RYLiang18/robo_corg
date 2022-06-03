@@ -1,5 +1,6 @@
 import pprint
-from get_docker_secret import get_docker_secret
+import os
+# from get_docker_secret import get_docker_secret
 
 # discord.py imports
 import discord
@@ -20,7 +21,7 @@ cogs = [
 for cog in cogs:
     bot.load_extension(cog)
 
-TOKEN = get_docker_secret('discord_token')
+TOKEN = os.environ.get('discord_token')
 
 print("SERVER IS RUNNING!")
 bot.run(TOKEN)

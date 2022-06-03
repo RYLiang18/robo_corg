@@ -1,6 +1,6 @@
 from twitchAPI.twitch import Twitch
 import os
-from get_docker_secret import get_docker_secret
+# from get_docker_secret import get_docker_secret
 
 
 class Twitch_Aux():
@@ -8,8 +8,8 @@ class Twitch_Aux():
         # >>> Authentication with Twitch API >>>
         # client_id = os.environ.get("twitch_id_1")
         # client_secret = os.environ.get("twitch_secret_1")
-        client_id = get_docker_secret('twitch_client_id')
-        client_secret = get_docker_secret('twitch_client_secret')
+        client_id = os.environ.get('twitch_client_id')
+        client_secret = os.environ.get('twitch_client_secret')
 
         self.twitch = Twitch(client_id, client_secret)
         self.twitch.authenticate_app([])
