@@ -1,6 +1,5 @@
 import pprint
 import os
-# from get_docker_secret import get_docker_secret
 
 # discord.py imports
 import discord

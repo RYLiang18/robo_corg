@@ -7,12 +7,11 @@ chardet==4.0.0
 charset-normalizer==2.0.12
 cryptography==36.0.2
 discord.py==1.7.3
-get-docker-secret==1.0.1
 greenlet==1.1.2
 idna==3.3
 multidict==6.0.2
-mysql-connector-python==8.0.28
 protobuf==3.19.4
+psycopg2-binary==2.9.3
 pycparser==2.21
 PyJWT==2.3.0
 python-dateutil==2.8.2

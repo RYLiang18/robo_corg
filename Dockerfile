@@ -6,11 +6,9 @@ USER ${USER}
 WORKDIR /home/${USER}
 
 COPY requirements.txt .
-COPY requirements-dev.txt .
 RUN python -m pip install -U pip
 
-# RUN pip install -r requirements.txt
-RUN pip install -r requirements-dev.txt
+RUN pip install -r requirements.txt
 
 COPY . .
 CMD ["sh", "init.sh"]

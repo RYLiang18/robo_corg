@@ -253,7 +253,7 @@ class Twitch_Notifications(commands.Cog):
                 )
             else:
                 db_streamer : StreamerModel = first_row.StreamerModel
-                curr_subscriber : SubscriberModel = get_subscriber_from_db(user_id)
+                curr_subscriber : SubscriberModel = get_subscriber_from_db(user_id, session)
                 db_streamer.subscribers.remove(curr_subscriber)
                 
 

@@ -1,6 +1,5 @@
 from twitchAPI.twitch import Twitch
 import os
-# from get_docker_secret import get_docker_secret
 
 
 class Twitch_Aux():
