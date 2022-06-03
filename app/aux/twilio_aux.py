@@ -1,12 +1,13 @@
 from twilio.rest import Client
-from get_docker_secret import get_docker_secret
+# from get_docker_secret import get_docker_secret
+import os
 
 
 class Twilio_Aux():
     def __init__(self):
         # >>> Authentication with Twilio API >>>
-        account_sid = get_docker_secret('twilio_sid')
-        auth_token = get_docker_secret('twilio_auth_token')
+        account_sid = os.environ.get('twilio_sid')
+        auth_token = os.environ.get('twilio_auth_token')
 
         self.client = Client(account_sid, auth_token)
         # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
