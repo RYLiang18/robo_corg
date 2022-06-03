@@ -8,3 +8,4 @@ __pycache__/
 # naughty naughty
 secrets/
 heroku_postgres_test.py
+.env
