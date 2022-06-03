@@ -1,7 +1,6 @@
 import re
 from discord import Message
 import os
-# from get_docker_secret import get_docker_secret
 from cryptography.fernet import Fernet
 
 # phone number regex from
